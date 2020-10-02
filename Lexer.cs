@@ -11,7 +11,7 @@ namespace LFP_PROYECTO2_Basic_IDE
     {
         // 1 character
         private string[] tokensPink1 = { "=", ";" }; // Asignation, Semicolon
-        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")" }; // Arithmetical Operators
+        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")", "{", "}" }; // Arithmetical Operators
         // 2 characters
         private string[] tokensBlue2 = { "++", "--", ">=", "<=", "==", "!=", "||", "&&" }; // Relational Operators, Logical Operators
         private string[] tokensGreen2 = { "SI" }; // Reserved word
@@ -630,6 +630,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                         {
                             type = "closed_parenthesis";
                         }
+                        else if (token == "{")
+                        {
+                            type = "open_brakets";
+                        }
+                        else if (token == "}")
+                        {
+                            type = "closed_brakets";
+                        }
                         else if (token == "<" || token == ">")
                         {
                             type = "relational_operator";
@@ -1004,7 +1012,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         {
             bool acceptedCharacter = false;
 
-            char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            //char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            char[] initialCharacter = { '_'};
             char[] acceptedCharacters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_' };
 
             if (token.Length > 0)
