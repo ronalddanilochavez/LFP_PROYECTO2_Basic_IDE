@@ -426,6 +426,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                         }
                     }
 
+                    //////////////////////////////////////////////
+
+                    // To color the methods "principal", "escribir" and "leer"
+                    if (word == "principal" || word == "escribir" || word == "leer")
+                    {
+                        colorText(word, rtb.Text.Length - word.Length, Color.CadetBlue, Color.Black, rtb);
+                    }
+
 
                     //////////////////////////////////////////////
 

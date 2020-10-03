@@ -156,6 +156,11 @@ Palabras Reservadas (Verde):
 	REINICIAR CICLO
 	TERMINAR CICLO
 
+Métodos Principales (Azul Cadete)
+	principal
+	escribir
+	leer
+
 Estructuras:
 	SI (condición) HACER
 	SINO
