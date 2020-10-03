@@ -11,7 +11,7 @@ namespace LFP_PROYECTO2_Basic_IDE
     {
         // 1 character
         private string[] tokensPink1 = { "=", ";" }; // Asignation, Semicolon
-        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")" }; // Arithmetical Operators
+        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")", "{", "}" }; // Arithmetical Operators
         // 2 characters
         private string[] tokensBlue2 = { "++", "--", ">=", "<=", "==", "!=", "||", "&&" }; // Relational Operators, Logical Operators
         private string[] tokensGreen2 = { "SI" }; // Reserved word
@@ -37,7 +37,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         // 14 characters
         private string[] tokensGreen14 = { "TERMINAR CICLO" }; // Reserved word
         // 15 characters
-        private string[] tokensGreen15 = { "REINICIAR CICLO" }; // Reserved word
+        private string[] tokensGreen15 = { "CONTINUAR CICLO" }; // Reserved word
 
         public class Token
         {
@@ -49,7 +49,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         //************************************************************************
         public string lexer(string text)
         {
-            string tokenLog = "********Think Outside the BOX********";
+            string tokenLog = "";
             string line = "";
             string word = "";
             string tempText = "";
@@ -62,6 +62,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             bool identifierExpected = false;
             List<string> identifiers = new List<string>();
             bool identifierNotValid = false;
+            Boolean identifiersProcessed = true;
 
             List<Token> tokenList = new List<Token>();
             Token myToken = new Token();
@@ -129,6 +130,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
                     start = 0;
                     identifierExpected = false;
+                    identifiersProcessed = false;
 
                     while (start < line.Length)
                     {
@@ -155,6 +157,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                                 {
                                     identifierExpected = true;
                                     break;
+                                }
+
+                                // To recognice the methods "principal", "escribir" and "leer"
+                                if (word == "principal" || word == "escribir" || word == "leer")
+                                {
+                                    token = word;
+                                    type = "method";
+                                    wordLength = token.Length;
                                 }
 
                                 // To test if is a boolean type
@@ -206,83 +216,88 @@ namespace LFP_PROYECTO2_Basic_IDE
                                         }
                                     }
                                 }
+
+                                identifiersProcessed = false;
                             }
                             else
                             {
                                 word = "";
+                                token = "";
+                                string listIdentifiers = "";
+
                                 for (int k = start; k < line.Length; k++)
                                 {
-                                    if (line[k] != '=' && line[k] != ';')
+                                    if (line[k] == '=' || line[k] == ';')
                                     {
-                                        word += Convert.ToString(line[k]);
-                                        wordLength = word.Length;
-                                        // Nedeed if the line ends without a '=' or ';'
-                                        if (k == line.Length - 1)
+                                        // List identifiers may have a lot of tokens
+                                        listIdentifiers = ListIdentifiers(word);
+                                        if (listIdentifiers.Length > 0)
                                         {
-                                            word = trimWord(word);
-                                            if (isIdentifier(word))
+                                            for (int l = 0; l < listIdentifiers.Length; l++)
                                             {
-                                                identifiers.Add(word);
-                                                token = word;
-                                                type = "identifier";
-                                                identifierNotValid = false;
-                                                identifierExpected = false;
-                                            }
-                                            else
-                                            {
-                                                token = word;
-                                                type = "identifier_NOT_Valid";
-                                                identifierNotValid = true;
-                                                identifierExpected = false;
+                                                if (listIdentifiers[l] == '\n')
+                                                {
+                                                    if (isIdentifier(token))
+                                                    {
+                                                        identifiers.Add(token);
+                                                        type = "identifier";
+                                                        tokenLog += token + "," + type + "\n";
+                                                        identifierExpected = false;
+                                                    }
+                                                    else
+                                                    {
+                                                        type = "identifier_NOT_Valid";
+                                                        tokenLog += token + "," + type + "\n";
+                                                        identifierExpected = false;
+                                                    }
+                                                    token = "";
+                                                }
+                                                else
+                                                {
+                                                    token += Convert.ToString(listIdentifiers[l]);
+
+                                                    if (l == listIdentifiers.Length - 1)
+                                                    {
+                                                        if (isIdentifier(token))
+                                                        {
+                                                            identifiers.Add(token);
+                                                            type = "identifier";
+                                                            tokenLog += token + "," + type + "\n";
+                                                            identifierExpected = false;
+                                                        }
+                                                        else
+                                                        {
+                                                            type = "identifier_NOT_Valid";
+                                                            tokenLog += token + "," + type + "\n";
+                                                            identifierExpected = false;
+                                                        }
+                                                        token = "";
+                                                    }
+                                                }
                                             }
                                         }
+
+                                        identifiersProcessed = true;
+                                        start = k;
+                                        break;
                                     }
                                     else
                                     {
-                                        wordLength = word.Length;
-                                        // We remove the spaces in the begining and in the end
-                                        word = trimWord(word);
-                                        if (isIdentifier(word))
-                                        {
-                                            identifiers.Add(word);
-                                            token = word;
-                                            type = "identifier";
-                                            identifierNotValid = false;
-                                            identifierExpected = false;
-                                        }
-                                        else
-                                        {
-                                            token = word;
-                                            type = "identifier_NOT_Valid";
-                                            identifierNotValid = true;
-                                            identifierExpected = false;
-                                        }
-
-                                        break;
+                                        word += Convert.ToString(line[k]);
                                     }
                                 }
 
-                                //identifierExpected = false;
+                                // identifierExpected = false;
                                 break;
                             }
                         }
 
-                        if (token.Length > 0 || identifierNotValid == true)
+                        if (token.Length > 0 && identifiersProcessed == false)
                         {
                             start += wordLength;
-                            if (identifierNotValid == true)
-                            {
-                                //tokenLog += "\nToken = \"" + token + "\"" + ", " + type;
-                                tokenLog += "\n" + token + "," + type;
-                                identifierNotValid = false;
-                            }
-                            else
-                            {
-                                //tokenLog += "\nToken = \"" + token + "\"" + ", " + type;
-                                tokenLog += "\n" + token + "," + type;
-                            }
+                            tokenLog += token + "," + type + "\n";
                         }
-                        else
+                        else if (identifiersProcessed == false)
                         {
                             start++;
                         }
@@ -294,263 +309,14 @@ namespace LFP_PROYECTO2_Basic_IDE
 
             return tokenLog;
         }
-
-        public List<Token> lexer2(string text)
-        {
-            string tokenLog = "********Think Outside the BOX********";
-            string line = "";
-            string word = "";
-            string tempText = "";
-            string token = "";
-            string type = "";
-            int start = 0;
-            int wordLength = 0;
-            bool isLongComment = false;
-            bool isShortComment = false;
-            bool identifierExpected = false;
-            List<string> identifiers = new List<string>();
-            bool identifierNotValid = false;
-
-            List<Token> tokenList = new List<Token>();
-            Token myToken = new Token();
-
-            // To process the commentaries we cut off the characters enclosed inside it and we only left the '\n' characters
-            for (int i = 0; i < text.Length; i++)
-            {
-                if (i + 1 < text.Length)
-                {
-                    if (isLongComment == false && text[i] == '/' && text[i + 1] == '/')
-                    {
-                        isShortComment = true;
-                    }
-
-                    if (isShortComment == false && text[i] == '/' && text[i + 1] == '*')
-                    {
-                        isLongComment = true;
-                    }
-
-                    if (isLongComment == true && text[i] == '*' && text[i + 1] == '/')
-                    {
-                        isLongComment = false;
-
-                        if (i + 2 < text.Length)
-                        {
-                            i += 2;
-                        }
-                        else
-                        {
-                            // Here the text ends if i + 2 == text.length and we dont need the reading of */
-                            break;
-                        }
-                    }
-                }
-
-                if (isShortComment == false && isLongComment == false)
-                {
-                    tempText += Convert.ToString(text[i]);
-                    continue;
-                }
-
-                if (text[i] == '\n')
-                {
-                    isShortComment = false;
-                    tempText += Convert.ToString(text[i]);
-                    continue;
-                }
-            }
-
-            // To find the tokens
-            for (int i = 0; i < tempText.Length; i++)
-            {
-                // We find a line to work with
-                if (tempText[i] != '\n' && i != tempText.Length - 1)
-                {
-                    line += Convert.ToString(tempText[i]);
-                }
-                else
-                {
-                    // If we are in text.Length - 1 index
-                    if (i == tempText.Length - 1)
-                    {
-                        line += Convert.ToString(tempText[i]);
-                    }
-
-                    start = 0;
-                    identifierExpected = false;
-
-                    while (start < line.Length)
-                    {
-                        word = "";
-                        myToken.token = "";
-                        myToken.type = "";
-
-                        for (int j = start; j < line.Length; j++)
-                        {
-                            if (identifierExpected == false)
-                            {
-                                word += Convert.ToString(line[j]);
-
-                                // Defined tokens
-                                // Needed, because compareToDefinedTokens erases tokenTemp if is not a defined token
-                                string[] temp = compareToDefinedTokens(word);
-                                if (temp[0].Length > 0)
-                                {
-                                    myToken.token = temp[0];
-                                    myToken.type = temp[1];
-                                    wordLength = token.Length;
-                                }
-                                temp = null;
-                                if (token == "booleano" || token == "cadena" || token == "caracter" || token == "decimal" || token == "entero")
-                                {
-                                    identifierExpected = true;
-                                    break;
-                                }
-
-                                // To test if is a boolean type
-                                if (isBoolean(word))
-                                {
-                                    myToken.token = word;
-                                    myToken.type = "boolean_value";
-                                    wordLength = token.Length;
-                                }
-                                // To test if is a string type
-                                if (isString(word))
-                                {
-                                    myToken.token = word;
-                                    myToken.type = "string_value";
-                                    wordLength = token.Length;
-                                }
-                                // To test if is a character type
-                                if (isCharacter(word))
-                                {
-                                    myToken.token = word;
-                                    myToken.type = "character_value";
-                                    wordLength = token.Length;
-                                }
-                                // To test if is a decimal type, we need to test decimal before integer
-                                if (isDecimal(word))
-                                {
-                                    myToken.token = word;
-                                    myToken.type = "decimal_value";
-                                    wordLength = token.Length;
-                                }
-                                // To test if is an integer type
-                                if (isInteger(word))
-                                {
-                                    myToken.token = word;
-                                    myToken.type = "integer_value";
-                                    wordLength = token.Length;
-                                }
-
-                                // To test if it is an identifier
-                                for (int k = 0; k < identifiers.Count; k++)
-                                {
-                                    if (word.Length == identifiers[k].Length)
-                                    {
-                                        if (word == identifiers[k])
-                                        {
-                                            myToken.token = word;
-                                            myToken.type = "identifier";
-                                            wordLength = token.Length;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                word = "";
-                                for (int k = start; k < line.Length; k++)
-                                {
-                                    if (line[k] != '=' && line[k] != ';')
-                                    {
-                                        word += Convert.ToString(line[k]);
-                                        wordLength = word.Length;
-                                        // Nedeed if the line ends without a '=' or ';'
-                                        if (k == line.Length - 1)
-                                        {
-                                            word = trimWord(word);
-                                            if (isIdentifier(word))
-                                            {
-                                                identifiers.Add(word);
-                                                myToken.token = word;
-                                                myToken.type = "identifier";
-                                                identifierNotValid = false;
-                                                identifierExpected = false;
-                                            }
-                                            else
-                                            {
-                                                myToken.token = word;
-                                                myToken.type = "identifier_NOT_Valid";
-                                                identifierNotValid = true;
-                                                identifierExpected = false;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        wordLength = word.Length;
-                                        // We remove the spaces in the begining and in the end
-                                        word = trimWord(word);
-                                        if (isIdentifier(word))
-                                        {
-                                            identifiers.Add(word);
-                                            myToken.token = word;
-                                            myToken.type = "identifier";
-                                            identifierNotValid = false;
-                                            identifierExpected = false;
-                                        }
-                                        else
-                                        {
-                                            myToken.token = word;
-                                            myToken.type = "identifier_NOT_Valid";
-                                            identifierNotValid = true;
-                                            identifierExpected = false;
-                                        }
-
-                                        break;
-                                    }
-                                }
-
-                                //identifierExpected = false;
-                                break;
-                            }
-                        }
-
-                        if (token.Length > 0 || identifierNotValid == true)
-                        {
-                            start += wordLength;
-                            if (identifierNotValid == true)
-                            {
-                                tokenList.Add(myToken);
-                                //tokenLog += "\nToken = \"" + token + "\"" + ", " + type;
-                                identifierNotValid = false;
-                            }
-                            else
-                            {
-                                tokenList.Add(myToken);
-                                //tokenLog += "\nToken = \"" + token + "\"" + ", " + type;
-                            }
-                        }
-                        else
-                        {
-                            start++;
-                        }
-                    }
-
-                    line = "";
-                }
-            }
-
-            return tokenList;
-        }
-
-        private string trimWord(string word)
+        private string TrimWordBorders(string word)
         {
             string temp1 = "";
             string temp2 = "";
 
             if (word.Length > 0)
             {
+                // Trims the first spaces of "word"
                 for (int i = 0; i < word.Length; i++)
                 {
                     if (word[i] == ' ')
@@ -567,6 +333,7 @@ namespace LFP_PROYECTO2_Basic_IDE
                     }
                 }
 
+                // Trims the last spaces of "word"
                 for (int i = temp1.Length - 1; i >= 0; i--)
                 {
                     if (temp1[i] == ' ')
@@ -585,6 +352,55 @@ namespace LFP_PROYECTO2_Basic_IDE
             }
 
             return temp2;
+        }
+
+        private string TrimWord(string word)
+        {
+            string temp = "";
+
+            if (word.Length > 0)
+            {
+                for (int i = 0; i < word.Length; i++)
+                {
+                    if (word[i] != ' ')
+                    {
+                        temp += Convert.ToString(word[i]);
+                    }
+                }
+            }
+
+            return temp;
+        }
+
+        private string ListIdentifiers (string word)
+        {
+            string wordList = "";
+            string temp = "";
+
+            if (word.Length > 0)
+            {
+                for (int i = 0; i < word.Length; i++)
+                {
+                    if (word[i] == ',')
+                    {
+                        temp = TrimWordBorders(temp);
+                        wordList += temp + "\n";
+                        temp = "";
+                    }
+                    else
+                    {
+                        temp += Convert.ToString(word[i]);
+
+                        if (i == word.Length - 1)
+                        {
+                            temp = TrimWordBorders(temp);
+                            wordList += temp + "\n";
+                        }
+                    }
+                }
+            }
+
+            return wordList;
         }
 
         private string[] compareToDefinedTokens(string word)
@@ -629,6 +445,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                         else if (token == ")")
                         {
                             type = "closed_parenthesis";
+                        }
+                        else if (token == "{")
+                        {
+                            type = "open_brakets";
+                        }
+                        else if (token == "}")
+                        {
+                            type = "closed_brakets";
                         }
                         else if (token == "<" || token == ">")
                         {
@@ -1004,7 +828,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         {
             bool acceptedCharacter = false;
 
-            char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            //char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            char[] initialCharacter = { '_'};
             char[] acceptedCharacters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_' };
 
             if (token.Length > 0)
