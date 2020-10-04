@@ -17,18 +17,10 @@ namespace LFP_PROYECTO2_Basic_IDE
 {
     class IDE
     {
-        /*private string[] bLueTokens = {"+","-","*","/","++","--",">","<",">=","<=","==","!=","||","&&","!","(",")"};
-        private string[] pinkTokens = { "=",";"};
-        private string[] greenTokens = {"SI", "SINO","FIN_SI","SINO_SI","EN_CASO","CASO:","OTRO CASO:","SEA:","FIN_CASO", "PARA","FIN_PARA","MIENTRAS","FIN_MIENTRAS","HACER","DESDE","HASTA","INCREMENTO","REINICIAR CICLO","TERMINAR CICLO"};
-        private string[] purpleTokens = { "entero" };
-        private string[] cyanTokens = { "decimal" };
-        private string[] grayTokens = { "cadena" };
-        private string[] orangeTokens = { "booleano" };
-        private string[] brownTokens = { "caracter" };*/
 
         // 1 character
         private string[] tokensPink1 = { "=", ";" }; // Asignation, Semicolon
-        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")" }; // Arithmetical Operators
+        private string[] tokensBlue1 = { "+", "-", "*", "/", ">", "<", "!", "(", ")", "{", "}" }; // Arithmetical Operators
         // 2 characters
         private string[] tokensBlue2 = { "++", "--", ">=", "<=", "==", "!=", "||", "&&" }; // Relational Operators, Logical Operators
         private string[] tokensGreen2 = { "SI" }; // Reserved word
@@ -54,7 +46,9 @@ namespace LFP_PROYECTO2_Basic_IDE
         // 14 characters
         private string[] tokensGreen14 = { "TERMINAR CICLO" }; // Reserved word
         // 15 characters
-        private string[] tokensGreen15 = { "REINICIAR CICLO" }; // Reserved word
+        private string[] tokensGreen15 = { "CONTINUAR CICLO" }; // Reserved word
+
+        private string[] allTokens = { "=", ";", "+", "-", "*", "/", ">", "<", "!", "(", ")", "{", "}", "++", "--", ">=", "<=", "==", "!=", "||", "&&", "SI", "SINO", "SEA:", "PARA", "CASO:", "HACER", "DESDE", "HASTA", "FIN_SI", "SINO_SI", "EN_CASO", "FIN_CASO", "FIN_PARA", "MIENTRAS", "OTRO CASO:", "INCREMENTO", "FIN_MIENTRAS", "TERMINAR CICLO", "CONTINUAR CICLO", "entero", "cadena", "decimal", "booleano", "caracter" };
 
 
         private bool closedString = true;
@@ -71,6 +65,9 @@ namespace LFP_PROYECTO2_Basic_IDE
         public int column = 0;
         private int lineFirstIndex = 0;
         private int lineLastIndex = 0;
+
+        //***********************************************************************
+        //***********************************************************************
 
         // !
         public void colorString(int start, int length, Color color, RichTextBox myRichTextBox)
@@ -429,6 +426,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                         }
                     }
 
+                    //////////////////////////////////////////////
+
+                    // To color the methods "principal", "escribir" and "leer"
+                    if (word == "principal" || word == "escribir" || word == "leer")
+                    {
+                        colorText(word, rtb.Text.Length - word.Length, Color.CadetBlue, Color.Black, rtb);
+                    }
+
 
                     //////////////////////////////////////////////
 
@@ -509,7 +514,8 @@ namespace LFP_PROYECTO2_Basic_IDE
                 //////////////////////////////////////////////
 
                 // This limits the maximun length of "word"
-                if (i == lineFirstIndex)
+                // 15 is the size of the longest token
+                if (i == rtb.Text.Length - 15)
                 {
                     break;
                 }
@@ -522,6 +528,61 @@ namespace LFP_PROYECTO2_Basic_IDE
             }
 
             return rtb.Text.Length;
+        }
+
+        public string processSuggestion(RichTextBox rtb)
+        {
+            string word = "";
+            string suggestionList = "";
+
+            //****************
+            // To find the main tokens
+            for (int i = (rtb.Text.Length - 1); i >= 0; i--)
+            {
+                word = Convert.ToString(rtb.Text[i]) + word;
+
+                //suggestionList = "";
+
+                //////////////////////////////////////////////
+
+
+                if (closedShortCommentary == true && closedLongCommentary == true)
+                {
+
+                    for (int l = 0; l < allTokens.Length; l++)
+                    {
+                        string temp = "";
+                        for (int m = 0; m < allTokens[l].Length; m++)
+                        {
+                            temp += Convert.ToString(allTokens[l][m]);
+
+                            if (word == temp)
+                            {
+                                // Adds some suggestion to the list
+                                suggestionList += allTokens[l] + "\n";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //////////////////////////////////////////////
+
+                // This limits the maximun length of "word"
+                // 15 is the size of the longest token
+                if (i == rtb.Text.Length - 15)
+                {
+                    break;
+                }
+
+                // This limits the word to the size of the actual line
+                /*if (rtb.Text[i] == '\n')
+                {
+                    return rtb.Text.Length;
+                }*/
+            }
+
+            return suggestionList;
         }
 
         // !*
@@ -742,7 +803,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         {
             bool acceptedCharacter = false;
 
-            char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            //char[] initialCharacter = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            char[] initialCharacter = { '_' };
             char[] acceptedCharacters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_' };
 
             if (token.Length > 0)

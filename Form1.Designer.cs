@@ -46,6 +46,7 @@
             this.cerrarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.tabPageIDE = new System.Windows.Forms.TabPage();
+            this.Suggestion = new System.Windows.Forms.RichTextBox();
             this.Language = new System.Windows.Forms.RichTextBox();
             this.ButtonCompile = new System.Windows.Forms.Button();
             this.Log = new System.Windows.Forms.RichTextBox();
@@ -215,6 +216,7 @@
             // 
             // tabPageIDE
             // 
+            this.tabPageIDE.Controls.Add(this.Suggestion);
             this.tabPageIDE.Controls.Add(this.Language);
             this.tabPageIDE.Controls.Add(this.ButtonCompile);
             this.tabPageIDE.Controls.Add(this.Log);
@@ -228,14 +230,25 @@
             this.tabPageIDE.Text = "IDE";
             this.tabPageIDE.UseVisualStyleBackColor = true;
             // 
+            // Suggestion
+            // 
+            this.Suggestion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Suggestion.Location = new System.Drawing.Point(741, 18);
+            this.Suggestion.Name = "Suggestion";
+            this.Suggestion.ReadOnly = true;
+            this.Suggestion.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
+            this.Suggestion.Size = new System.Drawing.Size(356, 106);
+            this.Suggestion.TabIndex = 5;
+            this.Suggestion.Text = "";
+            // 
             // Language
             // 
             this.Language.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Language.Location = new System.Drawing.Point(741, 18);
+            this.Language.Location = new System.Drawing.Point(741, 143);
             this.Language.Name = "Language";
             this.Language.ReadOnly = true;
             this.Language.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
-            this.Language.Size = new System.Drawing.Size(356, 503);
+            this.Language.Size = new System.Drawing.Size(356, 378);
             this.Language.TabIndex = 4;
             this.Language.Text = resources.GetString("Language.Text");
             // 
@@ -645,6 +658,7 @@
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.Button buttonB;
         private System.Windows.Forms.Button buttonA;
+        private System.Windows.Forms.RichTextBox Suggestion;
     }
 }
 
