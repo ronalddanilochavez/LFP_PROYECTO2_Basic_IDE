@@ -440,7 +440,7 @@ namespace LFP_PROYECTO2_Basic_IDE
                         }
                         else if (token == "(")
                         {
-                            type = "open_parenthesis";
+                            type = "opened_parenthesis";
                         }
                         else if (token == ")")
                         {
