@@ -175,11 +175,14 @@ namespace LFP_PROYECTO2_Basic_IDE
             myBinaryTree.findNodesInLevel(myBinaryTree.firstNode, 3);
             Log.AppendText("\n" + myBinaryTree.Log);*/
 
+            /*
             myParser.listArrayOfTokens(myLexer.lexer(IDELexer.Text));
             myParser.evaluateBooleanExpression(myParser.arrayOfTokens);
             myParser.populateBinaryTree(myBinaryTree, myParser.arrayOfTokens);
             myBinaryTree.printBinaryTree(myBinaryTree.firstNode);
-            Log.AppendText(myBinaryTree.Log);
+            Log.AppendText(myBinaryTree.Log);*/
+
+            Log.AppendText(Convert.ToString(myParser.evaluateBooleanExpression(myParser.arrayOfTokens)));
 
             /*
             myParser.listArrayOfTokens(myLexer.lexer(IDELexer.Text));
