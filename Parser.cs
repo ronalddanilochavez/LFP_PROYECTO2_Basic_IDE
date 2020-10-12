@@ -161,15 +161,9 @@ namespace LFP_PROYECTO2_Basic_IDE
             {
                 log += "NO es una expresión booleana" + "\n";
             }
-
-            // To verify if is a boolean expression
-            if (isBooleanExpression(arrayOfTokens) == true)
-            {
-                log += "Verdadero" + "\n";
-            }
             else
             {
-                log += "Falso" + "\n";
+                log += "Es una expresión booleana" + "\n";
             }
 
             // To quit if some trouble arises
@@ -612,7 +606,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             newToken.token = "verdadero";
             newToken.type = "boolean_value";
             bool tempBoolean = false;
-            /*
+
             if (operand1 != null && operand2 != null)
             {
                 if (operand1.type == "integer_value")
@@ -766,27 +760,134 @@ namespace LFP_PROYECTO2_Basic_IDE
                         {
                             if (relationalSymbol.token == "<")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) < Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) < Convert.ToInt64(operand2.value);
                             }
                             else if (relationalSymbol.token == ">")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) > Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) > Convert.ToInt64(operand2.value);
                             }
                             else if (relationalSymbol.token == "<=")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) <= Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) <= Convert.ToInt64(operand2.value);
                             }
                             else if (relationalSymbol.token == ">=")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) >= Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) >= Convert.ToInt64(operand2.value);
                             }
                             else if (relationalSymbol.token == "==")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) == Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) == Convert.ToInt64(operand2.value);
                             }
                             else if (relationalSymbol.token == "!=")
                             {
-                                tempBoolean = Convert.ToInt64(operand1.token) != Convert.ToInt64(operand2.value);
+                                tempBoolean = Convert.ToInt64(operand1.value) != Convert.ToInt64(operand2.value);
+                            }
+
+                            newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                        }
+                        else
+                        {
+                            newToken.token = "falso";
+                        }
+                    }
+                    else if (operand1.identifierType == "decimal_type")
+                    {
+                        if (operand2.type == "decimal_value" || (operand2.type == "identifier" && operand2.identifierType == "decimal_type"))
+                        {
+                            if (relationalSymbol.token == "<")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) < Convert.ToDouble(operand2.value);
+                            }
+                            else if (relationalSymbol.token == ">")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) > Convert.ToDouble(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "<=")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) <= Convert.ToDouble(operand2.value);
+                            }
+                            else if (relationalSymbol.token == ">=")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) >= Convert.ToDouble(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "==")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) == Convert.ToDouble(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "!=")
+                            {
+                                tempBoolean = Convert.ToDouble(operand1.value) != Convert.ToDouble(operand2.value);
+                            }
+
+                            newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                        }
+                        else
+                        {
+                            newToken.token = "falso";
+                        }
+                    }
+                    else if (operand1.identifierType == "string_type")
+                    {
+                        if (operand2.type == "string_value" || (operand2.type == "identifier" && operand2.identifierType == "string_type"))
+                        {
+                            if (relationalSymbol.token == "==")
+                            {
+                                tempBoolean = operand1.value == operand2.value;
+                            }
+                            else if (relationalSymbol.token == "!=")
+                            {
+                                tempBoolean = operand1.value != operand2.value;
+                            }
+
+                            newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                        }
+                        else
+                        {
+                            newToken.token = "falso";
+                        }
+                    }
+                    else if (operand1.identifierType == "character_type")
+                    {
+                        if (operand2.type == "character_value" || (operand2.type == "identifier" && operand2.identifierType == "character_type"))
+                        {
+                            if (relationalSymbol.token == "==")
+                            {
+                                tempBoolean = operand1.value == operand2.value;
+                            }
+                            else if (relationalSymbol.token == "!=")
+                            {
+                                tempBoolean = operand1.value != operand2.value;
+                            }
+
+                            newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                        }
+                        else
+                        {
+                            newToken.token = "falso";
+                        }
+                    }
+                    else if (operand1.identifierType == "boolean_type")
+                    {
+                        if (operand2.type == "boolean_value" || (operand2.type == "identifier" && operand2.identifierType == "boolean_type"))
+                        {
+                            bool operand1Boolean = operand1.value == "verdadero" ? true : false;
+                            bool operand2Boolean = operand2.value == "verdadero" ? true : false;
+
+                            if (relationalSymbol.token == "==")
+                            {
+                                tempBoolean = operand1Boolean == operand2Boolean;
+                            }
+                            else if (relationalSymbol.token == "!=")
+                            {
+                                tempBoolean = operand1Boolean != operand2Boolean;
+                            }
+                            else if (relationalSymbol.token == "||")
+                            {
+                                tempBoolean = operand1Boolean || operand2Boolean;
+                            }
+                            else if (relationalSymbol.token == "&&")
+                            {
+                                tempBoolean = operand1Boolean && operand2Boolean;
                             }
 
                             newToken.token = tempBoolean == true ? "verdadero" : "falso";
@@ -797,6 +898,7 @@ namespace LFP_PROYECTO2_Basic_IDE
                         }
                     }
                 }
+            }
             else // If some of the opeerands are null, a unary operation
             {
                 if (operand1 == null)
@@ -829,7 +931,7 @@ namespace LFP_PROYECTO2_Basic_IDE
                         newToken.token = "verdadero";
                     }
                 }
-            }*/
+            }
 
             return newToken;
         }
@@ -862,6 +964,12 @@ namespace LFP_PROYECTO2_Basic_IDE
                             if (_testNode.leftNode.token.type == "integer_value" || _testNode.leftNode.token.type == "decimal_value" || _testNode.leftNode.token.type == "string_value" || _testNode.leftNode.token.type == "character_value" || _testNode.leftNode.token.type == "boolean_value" || _testNode.leftNode.token.type == "identifier")
                             {
                                 _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, _testNode.rightNode.token, _testNode.token);
+                                // We have "!" symbol codified in "annotation"
+                                if (_testNode.annotation % 2 == 1)
+                                {
+                                    _testNode.token.token = _testNode.token.token == "verdadero" ? "falso" : "verdadero";
+                                    _testNode.token.value = _testNode.token.value == "verdadero" ? "falso" : "verdadero";
+                                }
                                 _testNode.leftNode = null;
                                 _testNode.rightNode = null;
                             }
@@ -869,6 +977,12 @@ namespace LFP_PROYECTO2_Basic_IDE
                         else
                         {
                             _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, null, _testNode.token);
+                            // We have "!" symbol codified in "annotation"
+                            if (_testNode.annotation % 2 == 1)
+                            {
+                                _testNode.token.token = _testNode.token.token == "verdadero" ? "falso" : "verdadero";
+                                _testNode.token.value = _testNode.token.value == "verdadero" ? "falso" : "verdadero";
+                            }
                             _testNode.leftNode = null;
                             _testNode.rightNode = null;
                         }
@@ -887,6 +1001,12 @@ namespace LFP_PROYECTO2_Basic_IDE
                             if (_testNode.rightNode.token.type == "integer_value" || _testNode.rightNode.token.type == "decimal_value" || _testNode.rightNode.token.type == "string_value" || _testNode.rightNode.token.type == "character_value" || _testNode.rightNode.token.type == "boolean_value" || _testNode.rightNode.token.type == "identifier")
                             {
                                 _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, _testNode.rightNode.token, _testNode.token);
+                                // We have "!" symbol codified in "annotation"
+                                if (_testNode.annotation % 2 == 1)
+                                {
+                                    _testNode.token.token = _testNode.token.token == "verdadero" ? "falso" : "verdadero";
+                                    _testNode.token.value = _testNode.token.value == "verdadero" ? "falso" : "verdadero";
+                                }
                                 _testNode.leftNode = null;
                                 _testNode.rightNode = null;
                             }
@@ -894,6 +1014,12 @@ namespace LFP_PROYECTO2_Basic_IDE
                         else
                         {
                             _testNode.token = evaluateBinaryUnaryOperation(null, _testNode.leftNode.token, _testNode.token);
+                            // We have "!" symbol codified in "annotation"
+                            if (_testNode.annotation % 2 == 1)
+                            {
+                                _testNode.token.token = _testNode.token.token == "verdadero" ? "falso" : "verdadero";
+                                _testNode.token.value = _testNode.token.value == "verdadero" ? "falso" : "verdadero";
+                            }
                             _testNode.leftNode = null;
                             _testNode.rightNode = null;
                         }
@@ -929,8 +1055,10 @@ namespace LFP_PROYECTO2_Basic_IDE
 
             populateBinaryTree(myBinaryTree, tokens);
 
-            return false;
+            return evaluateBooleanBinaryTree(myBinaryTree);
         }
+
+
 
         //**********************
         //**********************
