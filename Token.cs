@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace LFP_PROYECTO2_Basic_IDE
 {
-    class Token
+    public class Token
     {
         public string token;
         public string type;
         public string value;
+        public string identifierType;
 
         public Token ()
         {
             token = "";
             type = "";
             value = "";
+            identifierType = "";
         }
     }
 }

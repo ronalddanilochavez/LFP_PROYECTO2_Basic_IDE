@@ -9,12 +9,12 @@ namespace LFP_PROYECTO2_Basic_IDE
 {
     class Parser
     {
-        private Token[] arrayOfTokens = new Token[0];
+        public Token[] arrayOfTokens = new Token[0];
 
         private Lexer myLexer = new Lexer();
 
         //**********************
-        private void listArrayOfTokens(string tokens)
+        public void listArrayOfTokens(string tokens)
         {
             // To know the lenth of the array
             int size = 0;
@@ -58,31 +58,57 @@ namespace LFP_PROYECTO2_Basic_IDE
                     }
                 }
             }
-
-            // To populate the array of tokens with a starting value
+             
+            // To make an array of accepted identifiers
+            List<Token> identifiersList = new List<Token>();
             for (int i = 0; i < arrayOfTokens.Length; i++)
             {
                 if (arrayOfTokens[i].type == "identifier")
                 {
-                    if (arrayOfTokens[i - 1].type == "integer_type")
+                    if (arrayOfTokens[i - 1].type == "integer_type" || arrayOfTokens[i - 1].type == "decimal_type" || arrayOfTokens[i - 1].type == "string_type" || arrayOfTokens[i - 1].type == "character_type" || arrayOfTokens[i - 1].type == "boolean_type")
                     {
-                        arrayOfTokens[i].value = "0";
+                        arrayOfTokens[i].identifierType = arrayOfTokens[i - 1].type;
+                        identifiersList.Add(arrayOfTokens[i]);
                     }
-                    if (arrayOfTokens[i - 1].type == "decimal_type")
+                }
+            }
+
+            // To populate the array of tokens with a starting value
+            for (int i = 0; i < arrayOfTokens.Length; i++)
+            {
+                if (arrayOfTokens[i].type == "integer_value" || arrayOfTokens[i].type == "decimal_value" || arrayOfTokens[i].type == "string_value" || arrayOfTokens[i].type == "character_value" || arrayOfTokens[i].type == "boolean_value")
+                {
+                    arrayOfTokens[i].value = arrayOfTokens[i].token;
+                }
+                else if (arrayOfTokens[i].type == "identifier")
+                {
+                    for (int j = 0; j < identifiersList.Count; j++)
                     {
-                        arrayOfTokens[i].value = "0.0";
-                    }
-                    if (arrayOfTokens[i - 1].type == "string_type")
-                    {
-                        arrayOfTokens[i].value = "";
-                    }
-                    if (arrayOfTokens[i - 1].type == "character_type")
-                    {
-                        arrayOfTokens[i].value = "''";
-                    }
-                    if (arrayOfTokens[i - 1].type == "boolean_type")
-                    {
-                        arrayOfTokens[i].value = "verdadero";
+                        if (arrayOfTokens[i].token == identifiersList[j].token)
+                        {
+                            arrayOfTokens[i].identifierType = identifiersList[j].identifierType;
+
+                            if (identifiersList[j].identifierType == "integer_value")
+                            {
+                                arrayOfTokens[i].value = "0";
+                            }
+                            else if (identifiersList[j].identifierType == "decimal_value")
+                            {
+                                arrayOfTokens[i].value = "0.0";
+                            }
+                            else if (identifiersList[j].identifierType == "string_value")
+                            {
+                                arrayOfTokens[i].value = "";
+                            }
+                            else if (identifiersList[j].identifierType == "character_value")
+                            {
+                                arrayOfTokens[i].value = "''";
+                            }
+                            else if (identifiersList[j].identifierType == "boolean_value")
+                            {
+                                arrayOfTokens[i].value = "verdadero";
+                            }
+                        }
                     }
                 }
             }
@@ -517,1418 +543,391 @@ namespace LFP_PROYECTO2_Basic_IDE
             return true;
         }
 
-        private bool evaluateBooleanExpression(Token[] tokens)
+        // 5 STARS FUNCTION!!
+        public void populateBinaryTree(BinaryTree _myBinaryTree, Token[] myTokens)
         {
-            int start = 0;
-            int end = 0;
-            string tempBooleanString = "falso";
+            Node myNode = null;
 
-            string evaluateBoolean(Token[] tempTokens)
+            for (int i = 0; i < myTokens.Length; i++)
             {
-                bool tempBooleanValue = false;
-
-                bool stringToBoolean(string booleanString)
+                if (myTokens[i].token == "!")
                 {
-                    if (booleanString == "verdadero")
+                    // If we have a lot of "!" symbols
+                    int count = 0;
+                    for (int j = i; j < myTokens.Length; j++)
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                string booleanToString(bool boolean)
-                {
-                    if (boolean == true)
-                    {
-                        return "verdadero";
-                    }
-                    else
-                    {
-                        return "falso";
-                    }
-                }
-
-                if (tempTokens.Length > 2)
-                {
-                    while (tempTokens.Length > 1)
-                    {
-                        if (tempTokens[0].type == "integer_value" || tempTokens[0].type == "decimal_value" || tempTokens[0].type == "string_value" || tempTokens[0].type == "character_value")
+                        if (myTokens[j].token == "!")
                         {
-                            if (tempTokens[0].type == "integer_value")
-                            {
-                                if (tempTokens[2].type == "integer_value")
-                                {
-                                    if (tempTokens[1].token == ">")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) > Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "<")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) < Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == ">=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) >= Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "<=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) <= Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) == Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) != Convert.ToInt32(tempTokens[2].token);
-                                    }
-                                }
-                                else if (tempTokens[2].type == "identifier")
-                                {
-                                    if (tempTokens[1].token == ">")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) > Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "<")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) < Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == ">=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) >= Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "<=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) <= Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) == Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = Convert.ToInt32(tempTokens[0].token) != Convert.ToInt32(tempTokens[2].value);
-                                    }
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 2];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 2];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
-                            else if (tempTokens[0].type == "decimal_value")
-                            {
-                                if (tempTokens[2].type == "decimal_value")
-                                {
-                                    if (tempTokens[1].token == ">")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) > Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "<")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) < Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == ">=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) >= Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "<=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) <= Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) == Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                    else if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) != Convert.ToDecimal(tempTokens[2].token);
-                                    }
-                                }
-                                else if (tempTokens[2].type == "identifier")
-                                {
-                                    if (tempTokens[1].token == ">")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) > Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "<")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) < Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == ">=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) >= Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "<=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) <= Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) == Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) != Convert.ToDecimal(tempTokens[2].value);
-                                    }
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 2];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 2];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
-                            else if (tempTokens[0].type == "string_value")
-                            {
-                                if (tempTokens[2].type == "string_value")
-                                {
-                                    if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token == tempTokens[2].token;
-                                    }
-                                    if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token != tempTokens[2].token;
-                                    }
-                                }
-                                else if (tempTokens[2].type == "identifier")
-                                {
-                                    if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token == tempTokens[2].value;
-                                    }
-                                    if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token != tempTokens[2].value;
-                                    }
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 2];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 2];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
-                            else if (tempTokens[0].type == "character_value")
-                            {
-                                if (tempTokens[2].type == "character_value")
-                                {
-                                    if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token == tempTokens[2].token;
-                                    }
-                                    if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token != tempTokens[2].token;
-                                    }
-                                }
-                                else if (tempTokens[2].type == "identifier")
-                                {
-                                    if (tempTokens[1].token == "==")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token == tempTokens[2].value;
-                                    }
-                                    if (tempTokens[1].token == "!=")
-                                    {
-                                        tempBooleanValue = tempTokens[0].token != tempTokens[2].value;
-                                    }
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 2];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 2];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
+                            count++;
                         }
-                        else if (tempTokens[0].type == "boolean_value")
+                    }
+
+                    i += count;
+                    myNode = _myBinaryTree.append(myNode, myTokens[i]);
+                    myNode.annotation = count;  // number of negation symbols
+                }
+                else if (myTokens[i].token == "(")
+                {
+                    myNode = _myBinaryTree.append(myNode, myTokens[i]);
+                }
+                else if (myTokens[i].token == ")")
+                {
+                    myNode = myNode.previous;
+
+                    if (i + 1 < myTokens.Length)
+                    {
+                        if (myNode == _myBinaryTree.firstNode && (myTokens[i + 1].token == "||" || myTokens[i + 1].token == "&&"))
                         {
-                            if (tempTokens[2].type == "boolean_value")
-                            {
-                                if (tempTokens[1].token == "||")
-                                {
-                                    tempBooleanValue = stringToBoolean(tempTokens[0].token) || stringToBoolean(tempTokens[2].token);
-                                }
-                                else if (tempTokens[1].token == "&&")
-                                {
-                                    tempBooleanValue = stringToBoolean(tempTokens[0].token) && stringToBoolean(tempTokens[2].token);
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 2];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 2];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
-                            else if (tempTokens[2].type == "identifier")
-                            {
-                                if (tempTokens[2].value == "verdadero" || tempTokens[2].value == "falso")
-                                {
-                                    if (tempTokens[1].token == "||")
-                                    {
-                                        tempBooleanValue = stringToBoolean(tempTokens[0].token) || stringToBoolean(tempTokens[2].value);
-                                    }
-                                    else if (tempTokens[1].token == "&&")
-                                    {
-                                        tempBooleanValue = stringToBoolean(tempTokens[0].token) && stringToBoolean(tempTokens[2].value);
-                                    }
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                                else
-                                {
-                                    tempBooleanValue = stringToBoolean(tempTokens[0].token);
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                            }
-                            else if (tempTokens[2].type == "integer_value" || tempTokens[2].type == "decimal_value" || tempTokens[2].type == "string_value" || tempTokens[2].type == "character_value")
-                            {
-                                if (tempTokens[2].type == "integer_value")
-                                {
-                                    if (tempTokens[4].type == "integer_value")
-                                    {
-                                        if (tempTokens[3].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) > Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) < Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) >= Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) <= Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) == Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) != Convert.ToInt32(tempTokens[4].token);
-                                        }
-                                    }
-                                    else if (tempTokens[4].type == "identifier")
-                                    {
-                                        if (tempTokens[3].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) > Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) < Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) >= Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) <= Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) == Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[2].token) != Convert.ToInt32(tempTokens[4].value);
-                                        }
-                                    }
-                                }
-                                else if (tempTokens[2].type == "decimal_value")
-                                {
-                                    if (tempTokens[4].type == "decimal_value")
-                                    {
-                                        if (tempTokens[3].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) > Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) < Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) >= Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) <= Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) == Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                        else if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) != Convert.ToDecimal(tempTokens[4].token);
-                                        }
-                                    }
-                                    else if (tempTokens[4].type == "identifier")
-                                    {
-                                        if (tempTokens[3].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) > Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) < Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) >= Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) <= Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) == Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                        else if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) != Convert.ToDecimal(tempTokens[4].value);
-                                        }
-                                    }
-                                }
-                                else if (tempTokens[2].type == "string_value")
-                                {
-                                    if (tempTokens[4].type == "string_value")
-                                    {
-                                        if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token == tempTokens[4].token;
-                                        }
-                                        if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token != tempTokens[4].token;
-                                        }
-                                    }
-                                    else if (tempTokens[4].type == "identifier")
-                                    {
-                                        if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token == tempTokens[4].value;
-                                        }
-                                        if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token != tempTokens[4].value;
-                                        }
-                                    }
-                                }
-                                else if (tempTokens[2].type == "character_value")
-                                {
-                                    if (tempTokens[4].type == "character_value")
-                                    {
-                                        if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token == tempTokens[4].token;
-                                        }
-                                        if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token != tempTokens[4].token;
-                                        }
-                                    }
-                                    else if (tempTokens[4].type == "identifier")
-                                    {
-                                        if (tempTokens[3].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token == tempTokens[4].value;
-                                        }
-                                        if (tempTokens[3].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[2].token != tempTokens[4].value;
-                                        }
-                                    }
-                                }
-
-                                if (tempTokens[1].token == "||")
-                                {
-                                    tempBooleanValue = stringToBoolean(tempTokens[0].token) || tempBooleanValue;
-                                }
-                                else if (tempTokens[1].token == "&&")
-                                {
-                                    tempBooleanValue = stringToBoolean(tempTokens[0].token) && tempBooleanValue;
-                                }
-
-                                if (tempTokens.Length > 3)
-                                {
-                                    Token[] temp = new Token[tempTokens.Length - 4];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                    for (int i = 1; i < tempTokens.Length; i++)
-                                    {
-                                        temp[i] = tempTokens[i + 4];
-                                    }
-                                    tempTokens = temp;
-                                }
-                                else
-                                {
-                                    Token[] temp = new Token[1];
-                                    temp[0].token = booleanToString(tempBooleanValue);
-                                    temp[0].type = "boolean_value";
-                                    temp[0].value = booleanToString(tempBooleanValue);
-                                }
-                            }
-                        }
-                        else if (tempTokens[0].type == "identifier")
-                        {
-                            if (tempTokens[0].value == "integer_value" || tempTokens[0].value == "decimal_value" || tempTokens[0].value == "string_value" || tempTokens[0].value == "character_value" || tempTokens[0].value == "boolean_value")
-                            {
-                                if (tempTokens[0].value == "integer_value")
-                                {
-                                    if (tempTokens[2].type == "integer_value")
-                                    {
-                                        if (tempTokens[1].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) > Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) < Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) >= Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) <= Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) == Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) != Convert.ToInt32(tempTokens[2].token);
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "identifier")
-                                    {
-                                        if (tempTokens[1].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) > Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) < Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) >= Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) <= Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) == Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToInt32(tempTokens[0].value) != Convert.ToInt32(tempTokens[2].value);
-                                        }
-                                    }
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                                else if (tempTokens[0].value == "decimal_value")
-                                {
-                                    if (tempTokens[2].type == "decimal_value")
-                                    {
-                                        if (tempTokens[1].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) > Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) < Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) >= Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) <= Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) == Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) != Convert.ToDecimal(tempTokens[2].token);
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "identifier")
-                                    {
-                                        if (tempTokens[1].token == ">")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) > Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "<")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) < Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == ">=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) >= Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "<=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) <= Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) == Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                        else if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = Convert.ToDecimal(tempTokens[0].value) != Convert.ToDecimal(tempTokens[2].value);
-                                        }
-                                    }
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                                else if (tempTokens[0].value == "string_value")
-                                {
-                                    if (tempTokens[2].type == "string_value")
-                                    {
-                                        if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value == tempTokens[2].token;
-                                        }
-                                        if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value != tempTokens[2].token;
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "identifier")
-                                    {
-                                        if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value == tempTokens[2].value;
-                                        }
-                                        if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value != tempTokens[2].value;
-                                        }
-                                    }
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                                else if (tempTokens[0].value == "character_value")
-                                {
-                                    if (tempTokens[2].type == "character_value")
-                                    {
-                                        if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value == tempTokens[2].token;
-                                        }
-                                        if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value != tempTokens[2].token;
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "identifier")
-                                    {
-                                        if (tempTokens[1].token == "==")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value == tempTokens[2].value;
-                                        }
-                                        if (tempTokens[1].token == "!=")
-                                        {
-                                            tempBooleanValue = tempTokens[0].value != tempTokens[2].value;
-                                        }
-                                    }
-
-                                    if (tempTokens.Length > 3)
-                                    {
-                                        Token[] temp = new Token[tempTokens.Length - 2];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                        for (int i = 1; i < tempTokens.Length; i++)
-                                        {
-                                            temp[i] = tempTokens[i + 2];
-                                        }
-                                        tempTokens = temp;
-                                    }
-                                    else
-                                    {
-                                        Token[] temp = new Token[1];
-                                        temp[0].token = booleanToString(tempBooleanValue);
-                                        temp[0].type = "boolean_value";
-                                        temp[0].value = booleanToString(tempBooleanValue);
-                                    }
-                                }
-                                else if (tempTokens[0].value == "boolean_value")
-                                {
-                                    if (tempTokens[2].type == "boolean_value")
-                                    {
-                                        if (tempTokens[1].token == "||")
-                                        {
-                                            tempBooleanValue = stringToBoolean(tempTokens[0].value) || stringToBoolean(tempTokens[2].token);
-                                        }
-                                        else if (tempTokens[1].token == "&&")
-                                        {
-                                            tempBooleanValue = stringToBoolean(tempTokens[0].value) && stringToBoolean(tempTokens[2].token);
-                                        }
-
-                                        if (tempTokens.Length > 3)
-                                        {
-                                            Token[] temp = new Token[tempTokens.Length - 2];
-                                            temp[0].token = booleanToString(tempBooleanValue);
-                                            temp[0].type = "boolean_value";
-                                            temp[0].value = booleanToString(tempBooleanValue);
-                                            for (int i = 1; i < tempTokens.Length; i++)
-                                            {
-                                                temp[i] = tempTokens[i + 2];
-                                            }
-                                            tempTokens = temp;
-                                        }
-                                        else
-                                        {
-                                            Token[] temp = new Token[1];
-                                            temp[0].token = booleanToString(tempBooleanValue);
-                                            temp[0].type = "boolean_value";
-                                            temp[0].value = booleanToString(tempBooleanValue);
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "identifier")
-                                    {
-                                        if (tempTokens[2].value == "verdadero" || tempTokens[2].value == "falso")
-                                        {
-                                            if (tempTokens[1].token == "||")
-                                            {
-                                                tempBooleanValue = stringToBoolean(tempTokens[0].value) || stringToBoolean(tempTokens[2].value);
-                                            }
-                                            else if (tempTokens[1].token == "&&")
-                                            {
-                                                tempBooleanValue = stringToBoolean(tempTokens[0].value) && stringToBoolean(tempTokens[2].value);
-                                            }
-
-                                            if (tempTokens.Length > 3)
-                                            {
-                                                Token[] temp = new Token[tempTokens.Length - 2];
-                                                temp[0].token = booleanToString(tempBooleanValue);
-                                                temp[0].type = "boolean_value";
-                                                temp[0].value = booleanToString(tempBooleanValue);
-                                                for (int i = 1; i < tempTokens.Length; i++)
-                                                {
-                                                    temp[i] = tempTokens[i + 2];
-                                                }
-                                                tempTokens = temp;
-                                            }
-                                            else
-                                            {
-                                                Token[] temp = new Token[1];
-                                                temp[0].token = booleanToString(tempBooleanValue);
-                                                temp[0].type = "boolean_value";
-                                                temp[0].value = booleanToString(tempBooleanValue);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            tempBooleanValue = stringToBoolean(tempTokens[0].value);
-
-                                            if (tempTokens.Length > 3)
-                                            {
-                                                Token[] temp = new Token[tempTokens.Length - 2];
-                                                temp[0].token = booleanToString(tempBooleanValue);
-                                                temp[0].type = "boolean_value";
-                                                temp[0].value = booleanToString(tempBooleanValue);
-                                                for (int i = 1; i < tempTokens.Length; i++)
-                                                {
-                                                    temp[i] = tempTokens[i + 2];
-                                                }
-                                                tempTokens = temp;
-                                            }
-                                            else
-                                            {
-                                                Token[] temp = new Token[1];
-                                                temp[0].token = booleanToString(tempBooleanValue);
-                                                temp[0].type = "boolean_value";
-                                                temp[0].value = booleanToString(tempBooleanValue);
-                                            }
-                                        }
-                                    }
-                                    else if (tempTokens[2].type == "integer_value" || tempTokens[2].type == "decimal_value" || tempTokens[2].type == "string_value" || tempTokens[2].type == "character_value")
-                                    {
-                                        if (tempTokens[2].type == "integer_value")
-                                        {
-                                            if (tempTokens[4].type == "integer_value")
-                                            {
-                                                if (tempTokens[3].token == ">")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) > Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "<")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) < Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == ">=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) >= Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "<=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) <= Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) == Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) != Convert.ToInt32(tempTokens[4].token);
-                                                }
-                                            }
-                                            else if (tempTokens[4].type == "identifier")
-                                            {
-                                                if (tempTokens[3].token == ">")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) > Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "<")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) < Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == ">=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) >= Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "<=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) <= Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) == Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = Convert.ToInt32(tempTokens[2].token) != Convert.ToInt32(tempTokens[4].value);
-                                                }
-                                            }
-                                        }
-                                        else if (tempTokens[2].type == "decimal_value")
-                                        {
-                                            if (tempTokens[4].type == "decimal_value")
-                                            {
-                                                if (tempTokens[3].token == ">")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) > Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "<")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) < Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == ">=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) >= Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "<=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) <= Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) == Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                                else if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) != Convert.ToDecimal(tempTokens[4].token);
-                                                }
-                                            }
-                                            else if (tempTokens[4].type == "identifier")
-                                            {
-                                                if (tempTokens[3].token == ">")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) > Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "<")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) < Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == ">=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) >= Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "<=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) <= Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) == Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                                else if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = Convert.ToDecimal(tempTokens[2].token) != Convert.ToDecimal(tempTokens[4].value);
-                                                }
-                                            }
-                                        }
-                                        else if (tempTokens[2].type == "string_value")
-                                        {
-                                            if (tempTokens[4].type == "string_value")
-                                            {
-                                                if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token == tempTokens[4].token;
-                                                }
-                                                if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token != tempTokens[4].token;
-                                                }
-                                            }
-                                            else if (tempTokens[4].type == "identifier")
-                                            {
-                                                if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token == tempTokens[4].value;
-                                                }
-                                                if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token != tempTokens[4].value;
-                                                }
-                                            }
-                                        }
-                                        else if (tempTokens[2].type == "character_value")
-                                        {
-                                            if (tempTokens[4].type == "character_value")
-                                            {
-                                                if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token == tempTokens[4].token;
-                                                }
-                                                if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token != tempTokens[4].token;
-                                                }
-                                            }
-                                            else if (tempTokens[4].type == "identifier")
-                                            {
-                                                if (tempTokens[3].token == "==")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token == tempTokens[4].value;
-                                                }
-                                                if (tempTokens[3].token == "!=")
-                                                {
-                                                    tempBooleanValue = tempTokens[2].token != tempTokens[4].value;
-                                                }
-                                            }
-                                        }
-
-                                        if (tempTokens[1].token == "||")
-                                        {
-                                            tempBooleanValue = stringToBoolean(tempTokens[0].value) || tempBooleanValue;
-                                        }
-                                        else if (tempTokens[1].token == "&&")
-                                        {
-                                            tempBooleanValue = stringToBoolean(tempTokens[0].value) && tempBooleanValue;
-                                        }
-
-                                        if (tempTokens.Length > 3)
-                                        {
-                                            Token[] temp = new Token[tempTokens.Length - 4];
-                                            temp[0].token = booleanToString(tempBooleanValue);
-                                            temp[0].type = "boolean_value";
-                                            temp[0].value = booleanToString(tempBooleanValue);
-                                            for (int i = 1; i < tempTokens.Length; i++)
-                                            {
-                                                temp[i] = tempTokens[i + 4];
-                                            }
-                                            tempTokens = temp;
-                                        }
-                                        else
-                                        {
-                                            Token[] temp = new Token[1];
-                                            temp[0].token = booleanToString(tempBooleanValue);
-                                            temp[0].type = "boolean_value";
-                                            temp[0].value = booleanToString(tempBooleanValue);
-                                        }
-                                    }
-                                }
-                            }
+                            myNode = _myBinaryTree.pushLeft(_myBinaryTree.firstNode, myTokens[i + 1]);
+                            i++;
                         }
                     }
                 }
+                else if (myTokens[i].token == "||" || myTokens[i].token == "&&")
+                {
+                    if (myNode == null)
+                    {
+                        myNode = _myBinaryTree.pushLeft(_myBinaryTree.firstNode, myTokens[i]);
+                    }
 
-                return tokens[0].value;
+                    myNode.token = myTokens[i];
+                }
+                else if (myTokens[i].type == "integer_value" || myTokens[i].type == "decimal_value" || myTokens[i].type == "string_value" || myTokens[i].type == "character_value" || (myTokens[i].type == "identifier" && myTokens[i].value != "boolean_value"))
+                {
+                    _myBinaryTree.append(myNode, myTokens[i]);
+                    _myBinaryTree.append(myNode, myTokens[i + 2]);
+                    myNode.token = myTokens[i + 1];
+                    i += 2;
+                }
+                else if (myTokens[i].type == "boolean_value" || (myTokens[i].type == "identifier" && myTokens[i].value == "boolean_value"))
+                {
+                    myNode.token = myTokens[i];
+                }
             }
+        }
 
-            if (tokens.Length > 2)
+        public Token evaluateBinaryUnaryOperation(Token operand1, Token operand2, Token relationalSymbol)
+        {
+            Token newToken = new Token();
+            newToken.token = "verdadero";
+            newToken.type = "boolean_value";
+            bool tempBoolean = false;
+            /*
+            if (operand1 != null && operand2 != null)
             {
-                // To eliminate parenthesis and evaluate each of it reducing the expression to a pure logical one
-                while (tokens.Length > 1)
+                if (operand1.type == "integer_value")
                 {
-                    start = 0;
-                    end = 0;
-
-                    for (int i = 0; i < tokens.Length; i++)
+                    if (operand2.type == "integer_value" || (operand2.type == "identifier" && operand2.identifierType == "integer_type"))
                     {
-                        if (tokens[i].token == "(")
+                        if (relationalSymbol.token == "<")
                         {
-                            start = i;
+                            tempBoolean = Convert.ToInt64(operand1.token) < Convert.ToInt64(operand2.value);
                         }
-                        if (tokens[i].token == ")")
+                        else if (relationalSymbol.token == ">")
                         {
-                            end = i;
+                            tempBoolean = Convert.ToInt64(operand1.token) > Convert.ToInt64(operand2.value);
                         }
-                    }
-
-                    if (end > 0)
-                    {
-                        // To fill a sub array of tokens between parenthesis ()
-                        Token[] tempTokens = new Token[end - start - 1];
-                        for (int j = start + 1; j < end; j++)
+                        else if (relationalSymbol.token == "<=")
                         {
-                            tempTokens[j - start - 1] = tokens[j];
+                            tempBoolean = Convert.ToInt64(operand1.token) <= Convert.ToInt64(operand2.value);
                         }
-
-                        // Filling the new array
-                        Token[] newTokens = new Token[tokens.Length - end + start];
-                        if (start > 0)
+                        else if (relationalSymbol.token == ">=")
                         {
-                            for (int j = 0; j < start; j++)
-                            {
-                                newTokens[j] = tokens[j];
-                            }
+                            tempBoolean = Convert.ToInt64(operand1.token) >= Convert.ToInt64(operand2.value);
+                        }
+                        else if (relationalSymbol.token == "==")
+                        {
+                            tempBoolean = Convert.ToInt64(operand1.token) == Convert.ToInt64(operand2.value);
+                        }
+                        else if (relationalSymbol.token == "!=")
+                        {
+                            tempBoolean = Convert.ToInt64(operand1.token) != Convert.ToInt64(operand2.value);
                         }
 
-                        tempBooleanString = evaluateBoolean(tempTokens);
-
-                        newTokens[start] = new Token();
-                        newTokens[start].token = tempBooleanString;
-                        newTokens[start].type = "boolean_value";
-                        newTokens[start].value = tempBooleanString;
-                        if (end != tokens.Length - 1)
-                        {
-                            for (int j = start + 1; j < newTokens.Length; j++)
-                            {
-                                newTokens[j] = tokens[j + end - start];
-                            }
-                        }
-
-                        tokens = newTokens;
+                        newToken.token = tempBoolean == true ? "verdadero" : "falso";
                     }
                     else
                     {
-                        tempBooleanString = evaluateBoolean(tokens);
+                        newToken.token = "falso";
                     }
+                }
+                else if (operand1.type == "decimal_value")
+                {
+                    if (operand2.type == "decimal_value" || (operand2.type == "identifier" && operand2.identifierType == "decimal_type"))
+                    {
+                        if (relationalSymbol.token == "<")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) < Convert.ToDouble(operand2.value);
+                        }
+                        else if (relationalSymbol.token == ">")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) > Convert.ToDouble(operand2.value);
+                        }
+                        else if (relationalSymbol.token == "<=")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) <= Convert.ToDouble(operand2.value);
+                        }
+                        else if (relationalSymbol.token == ">=")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) >= Convert.ToDouble(operand2.value);
+                        }
+                        else if (relationalSymbol.token == "==")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) == Convert.ToDouble(operand2.value);
+                        }
+                        else if (relationalSymbol.token == "!=")
+                        {
+                            tempBoolean = Convert.ToDouble(operand1.token) != Convert.ToDouble(operand2.value);
+                        }
+
+                        newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                    }
+                    else
+                    {
+                        newToken.token = "falso";
+                    }
+                }
+                else if (operand1.type == "string_value")
+                {
+                    if (operand2.type == "string_value" || (operand2.type == "identifier" && operand2.identifierType == "string_type"))
+                    {
+                        if (relationalSymbol.token == "==")
+                        {
+                            tempBoolean = operand1.token == operand2.value;
+                        }
+                        else if (relationalSymbol.token == "!=")
+                        {
+                            tempBoolean = operand1.token != operand2.value;
+                        }
+
+                        newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                    }
+                    else
+                    {
+                        newToken.token = "falso";
+                    }
+                }
+                else if (operand1.type == "character_value")
+                {
+                    if (operand2.type == "character_value" || (operand2.type == "identifier" && operand2.identifierType == "character_type"))
+                    {
+                        if (relationalSymbol.token == "==")
+                        {
+                            tempBoolean = operand1.token == operand2.value;
+                        }
+                        else if (relationalSymbol.token == "!=")
+                        {
+                            tempBoolean = operand1.token != operand2.value;
+                        }
+
+                        newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                    }
+                    else
+                    {
+                        newToken.token = "falso";
+                    }
+                }
+                else if (operand1.type == "boolean_value")
+                {
+                    if (operand2.type == "boolean_value" || (operand2.type == "identifier" && operand2.identifierType == "boolean_type"))
+                    {
+                        bool operand1Boolean = operand1.token == "verdadero" ? true : false;
+                        bool operand2Boolean = operand2.token == "verdadero" ? true : false;
+
+                        if (relationalSymbol.token == "==")
+                        {
+                            tempBoolean = operand1Boolean == operand2Boolean;
+                        }
+                        else if (relationalSymbol.token == "!=")
+                        {
+                            tempBoolean = operand1Boolean != operand2Boolean;
+                        }
+                        else if (relationalSymbol.token == "||")
+                        {
+                            tempBoolean = operand1Boolean || operand2Boolean;
+                        }
+                        else if (relationalSymbol.token == "&&")
+                        {
+                            tempBoolean = operand1Boolean && operand2Boolean;
+                        }
+
+                        newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                    }
+                    else
+                    {
+                        newToken.token = "falso";
+                    }
+                }
+                else if (operand1.type == "identifier")
+                {
+                    if (operand1.identifierType == "integer_type")
+                    {
+                        if (operand2.type == "integer_value" || (operand2.type == "identifier" && operand2.identifierType == "integer_type"))
+                        {
+                            if (relationalSymbol.token == "<")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) < Convert.ToInt64(operand2.value);
+                            }
+                            else if (relationalSymbol.token == ">")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) > Convert.ToInt64(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "<=")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) <= Convert.ToInt64(operand2.value);
+                            }
+                            else if (relationalSymbol.token == ">=")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) >= Convert.ToInt64(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "==")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) == Convert.ToInt64(operand2.value);
+                            }
+                            else if (relationalSymbol.token == "!=")
+                            {
+                                tempBoolean = Convert.ToInt64(operand1.token) != Convert.ToInt64(operand2.value);
+                            }
+
+                            newToken.token = tempBoolean == true ? "verdadero" : "falso";
+                        }
+                        else
+                        {
+                            newToken.token = "falso";
+                        }
+                    }
+                }
+            else // If some of the opeerands are null, a unary operation
+            {
+                if (operand1 == null)
+                {
+                    if(operand2.type == "boolean_value")
+                    {
+                        newToken.token = operand2.token;
+                    }
+                    else if (operand2.type == "identifier" && isBoolean(operand2.value))
+                    {
+                        newToken.token = operand2.value;
+                    }
+                    else
+                    {
+                        newToken.token = "verdadero";
+                    }
+                }
+                if (operand2 == null)
+                {
+                    if (operand1.type == "boolean_value")
+                    {
+                        newToken.token = operand1.token;
+                    }
+                    else if (operand1.type == "identifier" && isBoolean(operand1.value))
+                    {
+                        newToken.token = operand1.value;
+                    }
+                    else
+                    {
+                        newToken.token = "verdadero";
+                    }
+                }
+            }*/
+
+            return newToken;
+        }
+
+        public bool evaluateBooleanBinaryTree (BinaryTree _myBinaryTree)
+        {
+            void findNodesInLevelAndEvaluate(Node _testNode, int level)
+            {
+                if (_testNode == null)
+                {
+                    return;
+                }
+
+                if (_testNode == _myBinaryTree.firstNode)
+                {
+                    if (_testNode.level == level)
+                    {
+                        // Do something here
+                        
+                    }
+                }
+
+                if (_testNode.leftNode != null)
+                {
+                    if (_testNode.leftNode.level == level)
+                    {
+                        // If we have a binary operation or unary operation in case the left or right nodes are null
+                        if (_testNode.rightNode != null)
+                        {
+                            if (_testNode.leftNode.token.type == "integer_value" || _testNode.leftNode.token.type == "decimal_value" || _testNode.leftNode.token.type == "string_value" || _testNode.leftNode.token.type == "character_value" || _testNode.leftNode.token.type == "boolean_value" || _testNode.leftNode.token.type == "identifier")
+                            {
+                                _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, _testNode.rightNode.token, _testNode.token);
+                                _testNode.leftNode = null;
+                                _testNode.rightNode = null;
+                            }
+                        }
+                        else
+                        {
+                            _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, null, _testNode.token);
+                            _testNode.leftNode = null;
+                            _testNode.rightNode = null;
+                        }
+                    }
+
+                    findNodesInLevelAndEvaluate(_testNode.leftNode, level);
+                }
+
+                if (_testNode.rightNode != null)
+                {
+                    if (_testNode.rightNode.level == level)
+                    {
+                        // If we have a binary operation or unary operation in case the left or right nodes are null
+                        if (_testNode.leftNode != null)
+                        {
+                            if (_testNode.rightNode.token.type == "integer_value" || _testNode.rightNode.token.type == "decimal_value" || _testNode.rightNode.token.type == "string_value" || _testNode.rightNode.token.type == "character_value" || _testNode.rightNode.token.type == "boolean_value" || _testNode.rightNode.token.type == "identifier")
+                            {
+                                _testNode.token = evaluateBinaryUnaryOperation(_testNode.leftNode.token, _testNode.rightNode.token, _testNode.token);
+                                _testNode.leftNode = null;
+                                _testNode.rightNode = null;
+                            }
+                        }
+                        else
+                        {
+                            _testNode.token = evaluateBinaryUnaryOperation(null, _testNode.leftNode.token, _testNode.token);
+                            _testNode.leftNode = null;
+                            _testNode.rightNode = null;
+                        }
+                    }
+
+                    findNodesInLevelAndEvaluate(_testNode.rightNode, level);
                 }
             }
 
-            if (tokens.Length == 1)
+            for (int i = _myBinaryTree.maxLevel; i > 0; i--)
             {
-                if (tokens[0].token == "verdadero")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                findNodesInLevelAndEvaluate(_myBinaryTree.firstNode,i);
+            }
+
+            if (_myBinaryTree.firstNode.token.token == "verdadero")
+            {
+                return true;
+            }
+            else if (_myBinaryTree.firstNode.token.token == "falso")
+            {
+                return false;
             }
 
             return false;
         }
 
-        private bool evaluateBooleanExpression2(Token[] tokens)
+        public bool evaluateBooleanExpression(Token[] tokens)
         {
             int start = 0;
             int end = 0;
+            string tempBooleanString = "falso";
+            BinaryTree myBinaryTree = new BinaryTree();
 
-            bool evaluateBoolean(Token[] tempTokens)
-            {
-                while (tempTokens.Length > 2)
-                {
-                    if (tempTokens[0].type == "integer_value" || tempTokens[0].type == "decimal_value" || tempTokens[0].type == "string_value" || tempTokens[0].type == "character_value")
-                    {
-                        bool tempBooleanValue;
-                        if (tempTokens[0].type == "integer_value")
-                        {
-                            if (tempTokens[1].token == ">")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) > Convert.ToInt32(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "<")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) < Convert.ToInt32(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == ">=")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) >= Convert.ToInt32(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "<=")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) <= Convert.ToInt32(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "==")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) == Convert.ToInt32(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "!=")
-                            {
-                                tempBooleanValue = Convert.ToInt32(tempTokens[0].token) != Convert.ToInt32(tempTokens[2].token);
-                            }
-                        }
-
-                        if (tempTokens[0].type == "decimal_value")
-                        {
-                            if (tempTokens[1].token == ">")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) > Convert.ToDecimal(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "<")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) < Convert.ToDecimal(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == ">=")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) >= Convert.ToDecimal(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "<=")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) <= Convert.ToDecimal(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "==")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) == Convert.ToDecimal(tempTokens[2].token);
-                            }
-                            if (tempTokens[1].token == "!=")
-                            {
-                                tempBooleanValue = Convert.ToDecimal(tempTokens[0].token) != Convert.ToDecimal(tempTokens[2].token);
-                            }
-                        }
-
-                        if (tempTokens[0].type == "string_value")
-                        {
-                            if (tempTokens[1].token == "==")
-                            {
-                                tempBooleanValue = tempTokens[0].token == tempTokens[2].token;
-                            }
-                            if (tempTokens[1].token == "!=")
-                            {
-                                tempBooleanValue = tempTokens[0].token != tempTokens[2].token;
-                            }
-                        }
-
-                        if (tempTokens[0].type == "character_value")
-                        {
-                            if (tempTokens[1].token == "==")
-                            {
-                                tempBooleanValue = tempTokens[0].token == tempTokens[2].token;
-                            }
-                            if (tempTokens[1].token == "!=")
-                            {
-                                tempBooleanValue = tempTokens[0].token != tempTokens[2].token;
-                            }
-                        }
-
-                        //*****
-
-
-
-                    }
-                    if (tempTokens[0].type == "boolean_value")
-                    {
-
-                    }
-                    if (tempTokens[0].type == "identifier")
-                    {
-
-                    }
-                }
-
-                return false;
-            }
-
-
-            // To eliminate parenthesis and evaluate each of it reducing the expression to a pure logical one
-            while (tokens.Length > 1)
-            {
-                start = 0;
-                end = 0;
-
-                for (int i = 0; i < tokens.Length; i++)
-                {
-                    if (tokens[i].token == "(")
-                    {
-                        start = i;
-                    }
-                    if (tokens[i].token == ")")
-                    {
-                        end = i;
-                    }
-                    if (end > 0)
-                    {
-                        // To fill a sub array of tokens between parenthesis ()
-                        Token[] tempTokens = new Token[end - start - 1];
-                        for (int j = start + 1; j < end; j++)
-                        {
-                            tempTokens[j - start - 1] = tokens[j];
-                        }
-
-                        bool tempBooleanValue = evaluateBoolean(tempTokens);
-                        // Filling the new array
-                        Token[] newTokens = new Token[tokens.Length - end + start];
-                        if (start > 0)
-                        {
-                            for (int j = 0; j < start; j++)
-                            {
-                                newTokens[j] = tokens[j];
-                            }
-                        }
-                        newTokens[start] = new Token();
-                        newTokens[start].token = Convert.ToString(tempBooleanValue);
-                        newTokens[start].type = "boolean_value";
-                        newTokens[start].value = Convert.ToString(tempBooleanValue);
-                        if (end != tokens.Length - 1)
-                        {
-                            for (int j = start + 1; j < newTokens.Length; j++)
-                            {
-                                newTokens[j] = tokens[j + end - start];
-                            }
-                        }
-
-                        tokens = newTokens;
-
-                        break;
-                    }
-                }
-            }
-
-            return Convert.ToBoolean(tokens[0].value);
-            /*
-            for (int i = 0; i < tokens.Length; i++)
-            {
-                if (tokens[i].token == "!")
-                {
-
-                }
-                else if (tokens[i].token == "(")
-                {
-
-                }
-                else if (tokens[i].token == ")")
-                {
-
-                }
-                else if (tokens[i].type == "logical_operator")
-                {
-
-                }
-                else if (tokens[i].type == "relational_operator")
-                {
-
-                }
-                else if (tokens[i].type == "identifier")
-                {
-
-                }
-                else if (tokens[i].type == "integer_value")
-                {
-
-                }
-                else if (tokens[i].type == "decimal_value")
-                {
-
-                }
-                else if (tokens[i].type == "string_value")
-                {
-
-                }
-                else if (tokens[i].type == "character_value")
-                {
-
-                }
-                else if (tokens[i].type == "boolean_value")
-                {
-
-                }
-                else
-                {
-                    return false;
-                }
-            }*/
+            populateBinaryTree(myBinaryTree, tokens);
 
             return false;
         }
