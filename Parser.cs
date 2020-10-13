@@ -254,15 +254,8 @@ namespace LFP_PROYECTO2_Basic_IDE
             return false;
         }
 
-        private string swapBooleanValue(Token token)
-        {
-            if (token.value == "verdadero")
-            {
-                return "falso";
-            }
-
-            return "verdadero";
-        }
+        //**********************************************************************************
+        //**************************** BOOLEAN METHODS**************************************
 
         private bool isBooleanExpression(Token[] tokens)
         {
@@ -1058,7 +1051,20 @@ namespace LFP_PROYECTO2_Basic_IDE
             return evaluateBooleanBinaryTree(myBinaryTree);
         }
 
+        //**************************** BOOLEAN METHODS**************************************
+        //**********************************************************************************
 
+        public void executeCommand(Token[] tokens, string commandType)
+        {
+            if (commandType == "asignation")
+            {
+
+            }
+            else if (commandType == "if_else")
+            {
+
+            }
+        }
 
         //**********************
         //**********************
