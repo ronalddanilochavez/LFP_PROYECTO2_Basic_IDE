@@ -82,6 +82,7 @@
     </Compile>
     <Compile Include="IDE.cs" />
     <Compile Include="Lexer.cs" />
+    <Compile Include="NTree.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
