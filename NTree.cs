@@ -10,6 +10,7 @@ namespace LFP_PROYECTO2_Basic_IDE
     public class NNode
     {
         public string type;
+        public Token[] booleanExpression;
         public List<Token> command;
         public NNode previous;
         public List<NNode> NextNNodes;
@@ -41,34 +42,37 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public NTree()
         {
-            firstNNode = null;
-            maxLevel = 0;
+            this.firstNNode = null;
+            this.maxLevel = 0;
+            this.Log = "";
         }
 
         //*******************************************************************  
 
         public NNode createNNode(string _type, List<Token> _command)
         {
-            NNode newNode = new NNode(_type, _command);
+            NNode newNNode = new NNode(_type, _command);
+            newNNode.type = _type;
 
             if (firstNNode == null)
             {
-                firstNNode = newNode;
-                newNode.level = 1;
+                firstNNode = newNNode;
+                newNNode.level = 1;
                 maxLevel = 1;
             }
 
-            return newNode;
+            return newNNode;
         }
 
         public NNode append(NNode _NNode, string _type, List<Token> _command)
         {
-            if (firstNNode == null)
+            if (firstNNode == null || _NNode == null)
             {
                 return createNNode(_type, _command);
             }
 
             NNode newNNode = new NNode(_type, _command);
+            newNNode.type = _type;
 
             newNNode.previous = _NNode;
             _NNode.NextNNodes.Add(newNNode);
@@ -82,26 +86,27 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public NNode push(NNode _NNode, string _type, List<Token> _command)
         {
-            if (firstNNode == null)
+            if (firstNNode == null || _NNode == null)
             {
                 return createNNode(_type, _command);
             }
 
             if (_NNode.previous == null)
             {
-                NNode newNode = new NNode(_type, _command);
+                NNode newNNode = new NNode(_type, _command);
+                newNNode.type = _type;
 
-                _NNode.previous = newNode;
-                newNode.NextNNodes.Add(_NNode);
+                _NNode.previous = newNNode;
+                newNNode.NextNNodes.Add(_NNode);
 
                 if (firstNNode == _NNode)
                 {
-                    firstNNode = newNode;
+                    firstNNode = newNNode;
                 }
 
                 refactorLevelsFrom(firstNNode);
 
-                return newNode;
+                return newNNode;
             }
 
             return null;
@@ -179,7 +184,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             }
         }
 
-        public void printBinaryTree(NNode _testNNode)
+        public void printNTree(NNode _testNNode)
         {
             if (_testNNode == null)
             {
@@ -189,20 +194,19 @@ namespace LFP_PROYECTO2_Basic_IDE
             if (_testNNode == firstNNode)
             {
                 // Do something here
-                Log += _testNNode.level + " root" + " " + _testNNode.type + "\n";
+                Log += _testNNode.level + " root" + " " + _testNNode.type;
             }
 
             if (_testNNode.NextNNodes.Count != 0)
             {
+                Log += "\n";
                 for (int i = 0; i < _testNNode.NextNNodes.Count; i++)
                 {
                     // Do something here
                     Log += _testNNode.NextNNodes[i].level + " " + _testNNode.NextNNodes[i].type + ", ";
 
-                    printBinaryTree(_testNNode.NextNNodes[i]);
+                    printNTree(_testNNode.NextNNodes[i]);
                 }
-
-                Log += "\n";
             }
         }
     }

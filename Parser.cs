@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Text;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         public Token[] arrayOfTokens = new Token[0];
 
         private Lexer myLexer = new Lexer();
+
+        public NTree myNTree = new NTree();
 
         //**********************
         public void listArrayOfTokens(string tokens)
@@ -118,6 +121,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         //************************************************************************************************************************************
         //************************************************************************************************************************************
         // The parser main method
+
+        //**********************
         public string parseArrayOfTokens (string lexerString) // Here we use a string of tokens procesed by the lexer
         {
             string log = "";
@@ -128,6 +133,12 @@ namespace LFP_PROYECTO2_Basic_IDE
 
             //***************************
             // TROUBLES AREA
+
+            // To test if the count of brakets and its order are right
+            if (isIdentifiersRight(arrayOfTokens) == false)
+            {
+                log += "Algunos identificadores están mal y No son válidos" + "\n";
+            }
 
             // To test if the count of brakets and its order are right
             if (isBraketRight(arrayOfTokens) == false)
@@ -182,6 +193,30 @@ namespace LFP_PROYECTO2_Basic_IDE
         //************************************************************************************************************************************
         //************************************************************************************************************************************
         //************************************************************************************************************************************
+
+        //**********************
+        // To test if there are identifers Not valid
+        private bool isIdentifiersRight(Token[] tokens)
+        {
+            int counter = 0;
+            if (tokens.Length > 0)
+            {
+                for (int i = 0; i < tokens.Length; i++)
+                {
+                    if (tokens[i].type == "identifier_NOT_Valid")
+                    {
+                        counter++;
+                    }
+
+                    if (counter > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
 
         //**********************
         // To test if the count of brakets and its order are right
@@ -257,6 +292,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         //**********************************************************************************
         //**************************** BOOLEAN METHODS**************************************
 
+        //**********************
         private bool isBooleanExpression(Token[] tokens)
         {
             for (int i = 0; i < tokens.Length; i++)
@@ -530,6 +566,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return true;
         }
 
+        //**********************
         // 5 STARS FUNCTION!!
         public void populateBinaryTree(BinaryTree _myBinaryTree, Token[] myTokens)
         {
@@ -593,6 +630,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             }
         }
 
+        //**********************
         public Token evaluateBinaryUnaryOperation(Token operand1, Token operand2, Token relationalSymbol)
         {
             Token newToken = new Token();
@@ -929,6 +967,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return newToken;
         }
 
+        //**********************
         public bool evaluateBooleanBinaryTree (BinaryTree _myBinaryTree)
         {
             void findNodesInLevelAndEvaluate(Node _testNode, int level)
@@ -1039,6 +1078,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return false;
         }
 
+        //**********************
         public bool evaluateBooleanExpression(Token[] tokens)
         {
             int start = 0;
@@ -1054,6 +1094,121 @@ namespace LFP_PROYECTO2_Basic_IDE
         //**************************** BOOLEAN METHODS**************************************
         //**********************************************************************************
 
+        //**********************
+        public void populateMyNTree(Token[] myTokens)
+        {
+            int treeLevel = 0;
+            string tokenType = "";
+            List<Token> tokenList = new List<Token>();
+            NNode myNNode = new NNode("", tokenList);
+            List<Token> commandTokens = new List<Token>();
+
+            myNTree = new NTree();
+
+            for (int i = 0; i < myTokens.Length; i++)
+            {
+                if (myTokens[i].token == "principal" || myTokens[i].token == "SI" || myTokens[i].token == "SINO" || myTokens[i].token == "SINO_SI" || myTokens[i].token == "PARA" || myTokens[i].token == "MIENTRAS" || myTokens[i].token == "HACER" || myTokens[i].token == "EN_CASO" || myTokens[i].token == "CASO:" || myTokens[i].token == "OTRO CASO:")
+                {
+                    if (myTokens[i].token == "principal")
+                    {
+                        tokenType = "principal_function";
+                    }
+                    else if (myTokens[i].token == "SI")
+                    {
+                        tokenType = "if";
+                    }
+                    else if (myTokens[i].token == "SINO")
+                    {
+                        tokenType = "else";
+                    }
+                    else if (myTokens[i].token == "SINO_SI")
+                    {
+                        tokenType = "else_if";
+                    }
+                    else if (myTokens[i].token == "PARA")
+                    {
+                        tokenType = "for";
+                    }
+                    else if (myTokens[i].token == "MIENTRAS")
+                    {
+                        tokenType = "for";
+                    }
+                    else if (myTokens[i].token == "HACER")
+                    {
+                        tokenType = "do";
+                    }
+                    else if (myTokens[i].token == "EN_CASO")
+                    {
+                        tokenType = "switch";
+                    }
+                    else if (myTokens[i].token == "CASO:")
+                    {
+                        tokenType = "case";
+                    }
+                    else if (myTokens[i].token == "OTRO CASO:")
+                    {
+                        tokenType = "default";
+                    }
+
+                    /*for (int j = i; j < myTokens.Length; j++)
+                    {
+                        if (myTokens[j].token != "{")
+                        {
+                            commandTokens.Add(myTokens[j]);
+                        }
+                        else
+                        {
+                            i += j - i - 1;
+                        }
+                    }*/
+                }
+                else if (myTokens[i].type == "integer_type" || myTokens[i].type == "decimal_type" || myTokens[i].type == "string_type" || myTokens[i].type == "character_type" || myTokens[i].type == "boolean_type" || myTokens[i].type == "identifier")
+                {
+                    tokenType = myTokens[i].type;
+
+                    /*for (int j = i; j < myTokens.Length; j++)
+                    {
+                        if (myTokens[j].token != ";")
+                        {
+                            tokenList.Add(myTokens[j]);
+                        }
+                        else
+                        {
+                            i += j - i - 1;
+                        }
+                    }*/
+                }
+
+
+
+                if (myTokens[i].token == "{")
+                {
+                    treeLevel++;
+                    myNNode = myNTree.append(myNNode, tokenType, tokenList/*commandTokens*/);
+                    tokenList.Clear();
+                }
+                else if (myTokens[i].token == "}")
+                {
+                    treeLevel--;
+                    tokenType = "";
+                    myNNode = myNNode.previous;
+                    //commandTokens.Clear();
+                    tokenList.Clear();
+                }
+                else if (myTokens[i].token == ";")
+                {
+                    myNNode = myNTree.append(myNNode, tokenType, tokenList);
+                    myNNode = myNNode.previous;
+                    tokenList.Clear();
+                }
+                else
+                {
+                    tokenList.Add(myTokens[i]);
+                }
+            }
+        }
+
+        //**********************
         public void executeCommand(Token[] tokens, string commandType)
         {
             if (commandType == "asignation")
@@ -1070,6 +1225,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         //**********************
         //**********************
         // Type test
+
+        //**********************
         public bool isInteger(string token)
         {
             bool isInteger = false;
@@ -1109,6 +1266,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return isInteger;
         }
 
+        //**********************
         public bool isDecimal(string token)
         {
             bool isDecimal = false;
@@ -1168,6 +1326,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return isDecimal;
         }
 
+        //**********************
         public bool isBoolean(string token)
         {
             bool isBoolean = false;
@@ -1184,6 +1343,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return isBoolean;
         }
 
+        //**********************
         public bool isString(string token)
         {
             bool isString = false;
@@ -1209,6 +1369,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             return isString;
         }
 
+        //**********************
         public bool isCharacter(string token)
         {
             bool isCharacter = false;
