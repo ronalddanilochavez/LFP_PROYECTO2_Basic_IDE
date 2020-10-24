@@ -155,11 +155,13 @@ namespace LFP_PROYECTO2_Basic_IDE
         {
             //Log.Text = myLexer.lexer(IDELexer.Text);
 
-            Log.Text = myParser.parseArrayOfTokens(myLexer.lexer(IDELexer.Text));
+            Log.Text = "";
+            Log.AppendText(myParser.parseArrayOfTokens(myLexer.lexer(IDELexer.Text)));
 
             Token myToken = new Token();
             Node myNode = new Node(myToken);
             BinaryTree myBinaryTree = new BinaryTree();
+            NTree myNTree = new NTree();
 
             /*myNode = myBinaryTree.append(myNode, myToken);
             myBinaryTree.append(myNode, myToken);
@@ -175,11 +177,23 @@ namespace LFP_PROYECTO2_Basic_IDE
             myBinaryTree.findNodesInLevel(myBinaryTree.firstNode, 3);
             Log.AppendText("\n" + myBinaryTree.Log);*/
 
+            /*
             myParser.listArrayOfTokens(myLexer.lexer(IDELexer.Text));
             myParser.evaluateBooleanExpression(myParser.arrayOfTokens);
             myParser.populateBinaryTree(myBinaryTree, myParser.arrayOfTokens);
             myBinaryTree.printBinaryTree(myBinaryTree.firstNode);
-            Log.AppendText(myBinaryTree.Log);
+            Log.AppendText(myBinaryTree.Log);*/
+
+
+
+            //Log.AppendText(Convert.ToString(myParser.evaluateBooleanExpression(myParser.arrayOfTokens)));
+
+            //++
+            /*Log.AppendText("\n\n");
+            myParser.parseArrayOfTokens(myLexer.lexer(IDELexer.Text));
+            myParser.populateMyNTree(myParser.arrayOfTokens);
+            myParser.myNTree.printNTree(myParser.myNTree.firstNNode);
+            Log.AppendText(myParser.myNTree.Log);*/
 
             /*
             myParser.listArrayOfTokens(myLexer.lexer(IDELexer.Text));

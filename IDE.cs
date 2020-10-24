@@ -26,23 +26,27 @@ namespace LFP_PROYECTO2_Basic_IDE
         private string[] tokensGreen2 = { "SI" }; // Reserved word
         // 4 characters
         private string[] tokensGreen4 = { "SINO", "SEA:", "PARA" }; // Reserved word
+        private string[] tokensCadetBlue4 = { "leer" }; // Function
         // 5 characters
         private string[] tokensGreen5 = { "CASO:", "HACER", "DESDE", "HASTA" }; // Reserved word
         // 6 characters
-        private string[] tokensGreen6 = { "FIN_SI" }; // Reserved word
+        private string[] tokensGreen6 = { }; // Reserved word
         private string[] tokensPurple6 = { "entero" }; // Integer Type
         private string[] tokensGray6 = { "cadena" }; // String Type
         // 7 characters
         private string[] tokensGreen7 = { "SINO_SI", "EN_CASO" }; // Reserved word
         private string[] tokensCyan7 = { "decimal" }; // Decimal Type
         // 8 characters
-        private string[] tokensGreen8 = { "FIN_CASO", "FIN_PARA", "MIENTRAS" };  // Reserved word
+        private string[] tokensGreen8 = { "MIENTRAS" };  // Reserved word
         private string[] tokensOrange8 = { "booleano" }; // Boolean Type
         private string[] tokensBrown8 = { "caracter" }; // Character Type
+        private string[] tokensCadetBlue8 = { "escribir" }; // Function
+        // 9 characters
+        private string[] tokensCadetBlue9 = { "principal" };
         // 10 characters
         private string[] tokensGreen10 = { "OTRO CASO:", "INCREMENTO" }; // Reserved word
         // 12 characters
-        private string[] tokensGreen12 = { "FIN_MIENTRAS" }; // Reserved word
+        private string[] tokensGreen12 = { }; // Reserved word
         // 14 characters
         private string[] tokensGreen14 = { "TERMINAR CICLO" }; // Reserved word
         // 15 characters
@@ -288,6 +292,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                                 colorText(word, rtb.Text.Length - tokensGreen4[k].Length, Color.Green, Color.Black, rtb);
                             }
                         }
+
+                        for (int k = 0; k < tokensCadetBlue4.Length; k++)
+                        {
+                            if (word == tokensCadetBlue4[k])
+                            {
+                                colorText(word, rtb.Text.Length - tokensCadetBlue4[k].Length, Color.CadetBlue, Color.Black, rtb);
+                            }
+                        }
                     }
 
                     // 5 characters length
@@ -376,6 +388,26 @@ namespace LFP_PROYECTO2_Basic_IDE
                                 colorText(word, rtb.Text.Length - tokensBrown8[k].Length, Color.Orange, Color.Black, rtb);
                             }
                         }
+
+                        for (int k = 0; k < tokensCadetBlue8.Length; k++)
+                        {
+                            if (word == tokensCadetBlue8[k])
+                            {
+                                colorText(word, rtb.Text.Length - tokensCadetBlue8[k].Length, Color.CadetBlue, Color.Black, rtb);
+                            }
+                        }
+                    }
+
+                    // 9 characters length
+                    if (word.Length == 9)
+                    {
+                        for (int k = 0; k < tokensCadetBlue9.Length; k++)
+                        {
+                            if (word == tokensCadetBlue9[k])
+                            {
+                                colorText(word, rtb.Text.Length - tokensCadetBlue9[k].Length, Color.CadetBlue, Color.Black, rtb);
+                            }
+                        }
                     }
 
                     // 10 characters length
@@ -425,15 +457,6 @@ namespace LFP_PROYECTO2_Basic_IDE
                             }
                         }
                     }
-
-                    //////////////////////////////////////////////
-
-                    // To color the methods "principal", "escribir" and "leer"
-                    if (word == "principal" || word == "escribir" || word == "leer")
-                    {
-                        colorText(word, rtb.Text.Length - word.Length, Color.CadetBlue, Color.Black, rtb);
-                    }
-
 
                     //////////////////////////////////////////////
 

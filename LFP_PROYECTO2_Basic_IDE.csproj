@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Automaton.cs" />
     <Compile Include="BinaryTree.cs" />
+    <Compile Include="CommandList.cs" />
     <Compile Include="DoublyLinkedList.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Form1.cs">

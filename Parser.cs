@@ -16,9 +16,16 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public NTree myNTree = new NTree();
 
+        public List<Token> myIdentifiers = new List<Token>();
+
+        public string LogFinal = "";
+
         //**********************
         public void listArrayOfTokens(string tokens)
         {
+            // To clear myIdentifiers array
+            myIdentifiers.Clear();
+
             // To know the lenth of the array
             int size = 0;
             for (int i = 0; i < tokens.Length; i++)
@@ -61,17 +68,94 @@ namespace LFP_PROYECTO2_Basic_IDE
                     }
                 }
             }
-             
+
             // To make an array of accepted identifiers
-            List<Token> identifiersList = new List<Token>();
+            string type = "";
             for (int i = 0; i < arrayOfTokens.Length; i++)
             {
-                if (arrayOfTokens[i].type == "identifier")
+                // Makes a mark when some defined type happens
+                if (arrayOfTokens[i].type == "integer_type" || arrayOfTokens[i].type == "decimal_type" || arrayOfTokens[i].type == "string_type" || arrayOfTokens[i].type == "character_type" || arrayOfTokens[i].type == "boolean_type")
                 {
-                    if (arrayOfTokens[i - 1].type == "integer_type" || arrayOfTokens[i - 1].type == "decimal_type" || arrayOfTokens[i - 1].type == "string_type" || arrayOfTokens[i - 1].type == "character_type" || arrayOfTokens[i - 1].type == "boolean_type")
+                    type = arrayOfTokens[i].type;
+                }
+
+                // Erases the type string
+                if (arrayOfTokens[i].token == "=" || arrayOfTokens[i].token == ";")
+                {
+                    type = "";
+                }
+
+                if (type == "integer_type" || type == "decimal_type" || type == "string_type" || type == "character_type" || type == "boolean_type")
+                {
+                    if (arrayOfTokens[i].type == "identifier")
                     {
-                        arrayOfTokens[i].identifierType = arrayOfTokens[i - 1].type;
-                        identifiersList.Add(arrayOfTokens[i]);
+                        arrayOfTokens[i].identifierType = type;
+
+                        if (myIdentifiers.Count > 0)
+                        {
+                            // To see if the identifier already exists
+                            bool equals = false;
+                            for (int j = 0; j < myIdentifiers.Count; j++)
+                            {
+                                if (myIdentifiers[j] == arrayOfTokens[i])
+                                {
+                                    equals = true;
+                                }
+                            }
+
+                            if (equals == false)
+                            {
+                                myIdentifiers.Add(arrayOfTokens[i]);
+                            }
+                        }
+                        else
+                        {
+                            myIdentifiers.Add(arrayOfTokens[i]);
+                        }
+                    }
+                }
+            }
+
+            // To fill all myIdentifiers array with values
+            if (myIdentifiers.Count > 0)
+            {
+                for (int i = 0; i < myIdentifiers.Count; i++)
+                {
+                    // To populate the array myIdentifiers with a starting value
+                    if (myIdentifiers[i].identifierType == "integer_type")
+                    {
+                        myIdentifiers[i].value = "0";
+                    }
+                    else if (myIdentifiers[i].identifierType == "decimal_type")
+                    {
+                        myIdentifiers[i].value = "0.0";
+                    }
+                    else if (myIdentifiers[i].identifierType == "string_type")
+                    {
+                        myIdentifiers[i].value = "";
+                    }
+                    else if (myIdentifiers[i].identifierType == "character_type")
+                    {
+                        myIdentifiers[i].value = "";
+                    }
+                    else if (myIdentifiers[i].identifierType == "boolean_type")
+                    {
+                        myIdentifiers[i].value = "verdadero";
+                    }
+                }
+            }
+
+            // To fill the arrayOfTokens identifiers with identifierType
+            if (arrayOfTokens.Length > 0 && myIdentifiers.Count > 0)
+            {
+                for (int i = 0; i < arrayOfTokens.Length; i++)
+                {
+                    for (int j = 0; j < myIdentifiers.Count; j++)
+                    {
+                        if (arrayOfTokens[i].token == myIdentifiers[j].token)
+                        {
+                            arrayOfTokens[i].identifierType = myIdentifiers[j].identifierType;
+                        }
                     }
                 }
             }
@@ -85,29 +169,29 @@ namespace LFP_PROYECTO2_Basic_IDE
                 }
                 else if (arrayOfTokens[i].type == "identifier")
                 {
-                    for (int j = 0; j < identifiersList.Count; j++)
+                    for (int j = 0; j < myIdentifiers.Count; j++)
                     {
-                        if (arrayOfTokens[i].token == identifiersList[j].token)
+                        if (arrayOfTokens[i].token == myIdentifiers[j].token)
                         {
-                            arrayOfTokens[i].identifierType = identifiersList[j].identifierType;
+                            arrayOfTokens[i].identifierType = myIdentifiers[j].identifierType;
 
-                            if (identifiersList[j].identifierType == "integer_value")
+                            if (myIdentifiers[j].identifierType == "integer_value")
                             {
                                 arrayOfTokens[i].value = "0";
                             }
-                            else if (identifiersList[j].identifierType == "decimal_value")
+                            else if (myIdentifiers[j].identifierType == "decimal_value")
                             {
                                 arrayOfTokens[i].value = "0.0";
                             }
-                            else if (identifiersList[j].identifierType == "string_value")
+                            else if (myIdentifiers[j].identifierType == "string_value")
                             {
                                 arrayOfTokens[i].value = "";
                             }
-                            else if (identifiersList[j].identifierType == "character_value")
+                            else if (myIdentifiers[j].identifierType == "character_value")
                             {
-                                arrayOfTokens[i].value = "''";
+                                arrayOfTokens[i].value = "";
                             }
-                            else if (identifiersList[j].identifierType == "boolean_value")
+                            else if (myIdentifiers[j].identifierType == "boolean_value")
                             {
                                 arrayOfTokens[i].value = "verdadero";
                             }
@@ -126,6 +210,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         public string parseArrayOfTokens (string lexerString) // Here we use a string of tokens procesed by the lexer
         {
             string log = "";
+            LogFinal = "";
 
             //log = lexerString;
             //log += "\n";
@@ -180,12 +265,35 @@ namespace LFP_PROYECTO2_Basic_IDE
             // To quit if some trouble arises
             if (log.Length > 0)
             {
-                return log;
+                //return log;
             }
 
             //***************************
 
+            // To execute the commands of the program
+            EXECUTE_COMMANDS();
+            log += LogFinal + "\n";
 
+            /*if (arrayOfTokens.Length > 0)
+            {
+                for (int i = 0; i < arrayOfTokens.Length; i++)
+                {
+                    if (arrayOfTokens[i].type == "identifier")
+                    {
+                        log += arrayOfTokens[i].token + ", " + arrayOfTokens[i].type + ", " + arrayOfTokens[i].value + ", " + arrayOfTokens[i].identifierType + "\n";
+                    }
+                }
+            }
+
+            for (int i = 0; i < myIdentifiers.Count; i++)
+            {
+                log += myIdentifiers[i].token + ", " + myIdentifiers[i].type + ", " + myIdentifiers[i].value + ", " + myIdentifiers[i].identifierType + "\n";
+            }
+
+            for (int i = 0; i < arrayOfTokens.Length; i++)
+            {
+                log += arrayOfTokens[i].token + " " + arrayOfTokens[i].value + "\n"; 
+            }*/
 
             return log;
         }
@@ -1094,6 +1202,166 @@ namespace LFP_PROYECTO2_Basic_IDE
         //**************************** BOOLEAN METHODS**************************************
         //**********************************************************************************
 
+        //**************************** OPERATION METHODS**************************************
+        //**********************************************************************************
+
+        private Token doMathematicalOperation(List<Token> _tokens)
+        {
+            Token result = new Token();
+
+            if (_tokens.Count > 0 && _tokens.Count < 4)
+            {
+                // To assure that our identifiers have the correct value
+                for (int i = 0; i < myIdentifiers.Count; i++)
+                {
+                    if (_tokens[0].token == myIdentifiers[i].token)
+                    {
+                        _tokens[0].value = myIdentifiers[i].value;
+                    }
+
+                    if (_tokens[2].token == myIdentifiers[i].token)
+                    {
+                        _tokens[2].value = myIdentifiers[i].value;
+                    }
+                }
+
+                if ((_tokens[0].type == "integer_value" || _tokens[0].identifierType == "integer_type") && (_tokens[2].type == "integer_value" || _tokens[2].identifierType == "integer_type"))
+                {
+                    result.type = _tokens[0].type;
+                    result.identifierType = _tokens[0].identifierType;
+                    string value = "";
+                    if (_tokens[1].token == "+")
+                    {
+                        value = Convert.ToString(Convert.ToInt64(_tokens[0].value) + Convert.ToInt64(_tokens[2].value));
+                        result.value = value;
+                    }
+                    else if (_tokens[1].token == "-")
+                    {
+                        value = Convert.ToString(Convert.ToInt64(_tokens[0].value) - Convert.ToInt64(_tokens[2].value));
+                        result.value = value;
+                    }
+                    if (_tokens[1].token == "*")
+                    {
+                        value = Convert.ToString(Convert.ToInt64(_tokens[0].value) * Convert.ToInt64(_tokens[2].value));
+                        result.value = value;
+                    }
+                    if (_tokens[1].token == "/")
+                    {
+                        value = Convert.ToString(Convert.ToInt64(_tokens[0].value) / Convert.ToInt64(_tokens[2].value));
+                        result.value = value;
+                    }
+                }
+                else if ((_tokens[0].type == "decimal_value" || _tokens[0].identifierType == "decimal_type") && (_tokens[2].type == "decimal_value" || _tokens[2].identifierType == "decimal_type"))
+                {
+                    result.type = _tokens[0].type;
+                    result.identifierType = _tokens[0].identifierType;
+                    string value = "";
+                    if (_tokens[1].token == "+")
+                    {
+                        value = Convert.ToString(Convert.ToDouble(_tokens[0].value) + Convert.ToDouble(_tokens[2].value));
+                        result.value = value;
+                    }
+                    else if (_tokens[1].token == "-")
+                    {
+                        value = Convert.ToString(Convert.ToDouble(_tokens[0].value) - Convert.ToDouble(_tokens[2].value));
+                        result.value = value;
+                    }
+                    if (_tokens[1].token == "*")
+                    {
+                        value = Convert.ToString(Convert.ToDouble(_tokens[0].value) * Convert.ToDouble(_tokens[2].value));
+                        result.value = value;
+                    }
+                    if (_tokens[1].token == "/")
+                    {
+                        value = Convert.ToString(Convert.ToDouble(_tokens[0].value) / Convert.ToDouble(_tokens[2].value));
+                        result.value = value;
+                    }
+                }
+                else if ((_tokens[0].type == "string_value" || _tokens[0].identifierType == "string_type") && (_tokens[2].type == "string_value" || _tokens[2].identifierType == "string_type"))
+                {
+                    result.type = _tokens[0].type;
+                    string value = "";
+                    if (_tokens[1].token == "+")
+                    {
+                        value = _tokens[0].value + _tokens[2].value;
+                        result.value = value;
+                    }
+                }
+                else if ((_tokens[0].type == "character_value" || _tokens[0].identifierType == "character_type") && (_tokens[2].type == "character_value" || _tokens[2].identifierType == "character_type"))
+                {
+                    result.type = _tokens[0].type;
+                    string value = "";
+                    if (_tokens[1].token == "+")
+                    {
+                        value = _tokens[0].value + _tokens[2].value;
+                        result.value = value;
+                    }
+                }
+            }
+            else
+            {
+                result.type = _tokens[0].type;
+                if (_tokens[0].type == "integer_value")
+                {
+                    result.token = "0";
+                    result.value = "0";
+                }
+                else if (_tokens[0].type == "decimal_value")
+                {
+                    result.token = "0.0";
+                    result.value = "0.0";
+                }
+                else if (_tokens[0].type == "string_value")
+                {
+                    result.token = "";
+                    result.value = "";
+                }
+                else if (_tokens[0].type == "character_value")
+                {
+                    result.token = "''";
+                    result.value = "''";
+                }
+                else if (_tokens[0].type == "boolean_value")
+                {
+                    result.token = "verdadero";
+                    result.value = "verdadero";
+                }
+                else if (_tokens[0].type == "identifier")
+                {
+                    if (_tokens[0].identifierType == "integer_type")
+                    {
+                        result.token = "0";
+                        result.value = "0";
+                    }
+                    else if (_tokens[0].identifierType == "decimal_type")
+                    {
+                        result.token = "0.0";
+                        result.value = "0.0";
+                    }
+                    else if (_tokens[0].identifierType == "string_type")
+                    {
+                        result.token = "";
+                        result.value = "";
+                    }
+                    else if (_tokens[0].identifierType == "character_type")
+                    {
+                        result.token = "";
+                        result.value = "";
+                    }
+                    else if (_tokens[0].identifierType == "boolean_type")
+                    {
+                        result.token = "verdadero";
+                        result.value = "verdadero";
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        //**************************** OPERATION METHODS**************************************
+        //**********************************************************************************
+
         //**********************
         public void populateMyNTree(Token[] myTokens)
         {
@@ -1101,82 +1369,77 @@ namespace LFP_PROYECTO2_Basic_IDE
             string tokenType = "";
             List<Token> tokenList = new List<Token>();
             NNode myNNode = new NNode("", tokenList);
-            List<Token> commandTokens = new List<Token>();
+            bool booleanSwitch = true;
 
             myNTree = new NTree();
 
             for (int i = 0; i < myTokens.Length; i++)
             {
-                if (myTokens[i].token == "principal" || myTokens[i].token == "SI" || myTokens[i].token == "SINO" || myTokens[i].token == "SINO_SI" || myTokens[i].token == "PARA" || myTokens[i].token == "MIENTRAS" || myTokens[i].token == "HACER" || myTokens[i].token == "EN_CASO" || myTokens[i].token == "CASO:" || myTokens[i].token == "OTRO CASO:")
+                if (booleanSwitch == true)
                 {
-                    if (myTokens[i].token == "principal")
+                    if (myTokens[i].token == "principal" || myTokens[i].token == "escribir" || myTokens[i].token == "leer" || myTokens[i].token == "SI" || myTokens[i].token == "SINO" || myTokens[i].token == "SINO_SI" || myTokens[i].token == "PARA" || myTokens[i].token == "MIENTRAS" || myTokens[i].token == "HACER" || myTokens[i].token == "EN_CASO" || myTokens[i].token == "CASO:" || myTokens[i].token == "OTRO CASO:")
                     {
-                        tokenType = "principal_function";
+                        if (myTokens[i].token == "principal")
+                        {
+                            tokenType = "principal_function";
+                        }
+                        else if (myTokens[i].token == "SI")
+                        {
+                            tokenType = "if";
+                        }
+                        else if (myTokens[i].token == "SINO")
+                        {
+                            tokenType = "else";
+                        }
+                        else if (myTokens[i].token == "SINO_SI")
+                        {
+                            tokenType = "else_if";
+                        }
+                        else if (myTokens[i].token == "PARA")
+                        {
+                            tokenType = "for";
+                        }
+                        else if (myTokens[i].token == "MIENTRAS")
+                        {
+                            tokenType = "for";
+                        }
+                        else if (myTokens[i].token == "HACER")
+                        {
+                            tokenType = "do";
+                        }
+                        else if (myTokens[i].token == "EN_CASO")
+                        {
+                            tokenType = "switch";
+                        }
+                        else if (myTokens[i].token == "CASO:")
+                        {
+                            tokenType = "case";
+                        }
+                        else if (myTokens[i].token == "OTRO CASO:")
+                        {
+                            tokenType = "default";
+                        }
+                        else if (myTokens[i].token == "leer")
+                        {
+                            tokenType = "method";
+                        }
+                        else if (myTokens[i].token == "escribir")
+                        {
+                            tokenType = "method";
+                        }
+                        else if (myTokens[i].token == "principal")
+                        {
+                            tokenType = "method";
+                        }
                     }
-                    else if (myTokens[i].token == "SI")
+                    else if (myTokens[i].type == "integer_type" || myTokens[i].type == "decimal_type" || myTokens[i].type == "string_type" || myTokens[i].type == "character_type" || myTokens[i].type == "boolean_type" || myTokens[i].type == "identifier")
                     {
-                        tokenType = "if";
-                    }
-                    else if (myTokens[i].token == "SINO")
-                    {
-                        tokenType = "else";
-                    }
-                    else if (myTokens[i].token == "SINO_SI")
-                    {
-                        tokenType = "else_if";
-                    }
-                    else if (myTokens[i].token == "PARA")
-                    {
-                        tokenType = "for";
-                    }
-                    else if (myTokens[i].token == "MIENTRAS")
-                    {
-                        tokenType = "for";
-                    }
-                    else if (myTokens[i].token == "HACER")
-                    {
-                        tokenType = "do";
-                    }
-                    else if (myTokens[i].token == "EN_CASO")
-                    {
-                        tokenType = "switch";
-                    }
-                    else if (myTokens[i].token == "CASO:")
-                    {
-                        tokenType = "case";
-                    }
-                    else if (myTokens[i].token == "OTRO CASO:")
-                    {
-                        tokenType = "default";
+                        tokenType = myTokens[i].type;
                     }
 
-                    /*for (int j = i; j < myTokens.Length; j++)
-                    {
-                        if (myTokens[j].token != "{")
-                        {
-                            commandTokens.Add(myTokens[j]);
-                        }
-                        else
-                        {
-                            i += j - i - 1;
-                        }
-                    }*/
-                }
-                else if (myTokens[i].type == "integer_type" || myTokens[i].type == "decimal_type" || myTokens[i].type == "string_type" || myTokens[i].type == "character_type" || myTokens[i].type == "boolean_type" || myTokens[i].type == "identifier")
-                {
-                    tokenType = myTokens[i].type;
-
-                    /*for (int j = i; j < myTokens.Length; j++)
-                    {
-                        if (myTokens[j].token != ";")
-                        {
-                            tokenList.Add(myTokens[j]);
-                        }
-                        else
-                        {
-                            i += j - i - 1;
-                        }
-                    }*/
+                    // Needed to deativate the switch
+                    // We need to test only the first words that appears
+                    booleanSwitch = false;
                 }
 
 
@@ -1184,15 +1447,15 @@ namespace LFP_PROYECTO2_Basic_IDE
                 if (myTokens[i].token == "{")
                 {
                     treeLevel++;
-                    myNNode = myNTree.append(myNNode, tokenType, tokenList/*commandTokens*/);
+                    myNNode = myNTree.append(myNNode, tokenType, tokenList);
                     tokenList.Clear();
+                    booleanSwitch = true;
                 }
                 else if (myTokens[i].token == "}")
                 {
                     treeLevel--;
                     tokenType = "";
                     myNNode = myNNode.previous;
-                    //commandTokens.Clear();
                     tokenList.Clear();
                 }
                 else if (myTokens[i].token == ";")
@@ -1200,25 +1463,391 @@ namespace LFP_PROYECTO2_Basic_IDE
                     myNNode = myNTree.append(myNNode, tokenType, tokenList);
                     myNNode = myNNode.previous;
                     tokenList.Clear();
+                    booleanSwitch = true;
                 }
                 else
                 {
+                    // This adds every token in the commands
                     tokenList.Add(myTokens[i]);
                 }
             }
         }
 
         //**********************
-        public void executeCommand(Token[] tokens, string commandType)
+        public void executeCommand(NNode _myNNode)
         {
-            if (commandType == "asignation")
+            // If is a type declaration: entero _a = 3;
+            if (_myNNode.type == "integer_type" || _myNNode.type == "decimal_type" || _myNNode.type == "string_type" || _myNNode.type == "character_type" || _myNNode.type == "boolean_type")
             {
+                bool assignationSignExists = false;
+                bool operationSignExists = false;
 
+                // To know if there is an equal sign or operation sign
+                for (int i = 0; i < _myNNode.command.Count; i++)
+                {
+                    if (_myNNode.command[i].token == "=" || _myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                    {
+                        if (_myNNode.command[i].token == "=")
+                        {
+                            assignationSignExists = true;
+                        }
+                        else if (_myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                        {
+                            operationSignExists = true;
+                        }
+                    }
+                }
+
+                if (assignationSignExists == true)
+                {
+                    if (operationSignExists == false)
+                    {
+                        // To search for identifiers and values in command expression of tokens
+                        List<Token> identifiers = new List<Token>();
+                        List<Token> values = new List<Token>();
+                        for (int i = 0; i < _myNNode.command.Count; i++)
+                        {
+                            if (_myNNode.command[i].type == "identifier")
+                            {
+                                // We can have many identifiers in a row: _a, _b, _c
+                                identifiers.Add(_myNNode.command[i]);
+                            }
+
+                            if (_myNNode.command[i].type == "integer_value" || _myNNode.command[i].type == "decimal_value" || _myNNode.command[i].type == "string_value" || _myNNode.command[i].type == "character_value" || _myNNode.command[i].type == "boolean_value")
+                            {
+                                // We can have many values in a row: 1, 2
+                                values.Add(_myNNode.command[i]);
+                            }
+                        }
+
+                        // To assign values to the global myIdentifiers array
+                        // The number of values is the limit, so: entero _a, _b, _c = 1, 2  -> _a = 1, _b= 2, _c = 0
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            for (int j = 0; j < myIdentifiers.Count; j++)
+                            {
+                                if (identifiers[i].token == myIdentifiers[j].token)
+                                {
+                                    myIdentifiers[j].value = values[i].token;
+                                }
+                            }
+                        }
+
+                        identifiers = null;
+                        values = null;
+                    }
+                    else
+                    {
+                        // To search for identifiers and values in command expression of tokens
+                        List<Token> identifiers = new List<Token>();
+                        List<Token> operation = new List<Token>();
+                        bool assignation = false;
+
+                        for (int i = 0; i < _myNNode.command.Count; i++)
+                        {
+                            if (_myNNode.command[i].token == "=")
+                            {
+                                assignation = true;
+                                continue;
+                            }
+
+                            if (assignation == false)
+                            {
+                                if (_myNNode.command[i].type == "identifier")
+                                {
+                                    // We can have many identifiers in a row: _a, _b, _c
+                                    identifiers.Add(_myNNode.command[i]);
+                                }
+                            }
+                            else
+                            {
+                                if (_myNNode.command[i].type == "integer_value" || _myNNode.command[i].type == "decimal_value" || _myNNode.command[i].type == "string_value" || _myNNode.command[i].type == "character_value" || _myNNode.command[i].type == "boolean_value" || _myNNode.command[i].type == "identifier" || _myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                                {
+                                    // We can have many values in a row: 1, 2
+                                    operation.Add(_myNNode.command[i]);
+                                }
+                            }
+                        }
+
+                        // To assign values to the global myIdentifiers array
+                        // The number of values is the limit, so: entero _a = 1 + _a;
+                        if (identifiers.Count > 0)
+                        {
+                            Token tempToken = new Token();
+                            tempToken = doMathematicalOperation(operation);
+
+                            for (int j = 0; j < myIdentifiers.Count; j++)
+                            {
+                                if (identifiers[0].token == myIdentifiers[j].token)
+                                {
+                                    myIdentifiers[j].value = tempToken.value;
+                                }
+                            }
+                        }
+
+                        identifiers = null;
+                        operation = null;
+                    }
+                    
+                }
             }
-            else if (commandType == "if_else")
+            // If is an identifier: _a = 3;
+            else if (_myNNode.type == "identifier")
             {
+                bool assignationSignExists = false;
+                bool operationSignExists = false;
 
+                // To know if there is an equal sign or operation sign
+                for (int i = 0; i < _myNNode.command.Count; i++)
+                {
+                    if (_myNNode.command[i].token == "=" || _myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                    {
+                        if (_myNNode.command[i].token == "=")
+                        {
+                            assignationSignExists = true;
+                        }
+                        else if (_myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                        {
+                            operationSignExists = true;
+                        }
+                    }
+                }
+
+                if (assignationSignExists == true)
+                {
+                    if (operationSignExists == false)
+                    {
+                        // To search for identifiers and values in command expression of tokens
+                        List<Token> identifiers = new List<Token>();
+                        List<Token> values = new List<Token>();
+                        for (int i = 0; i < _myNNode.command.Count; i++)
+                        {
+                            if (_myNNode.command[i].type == "identifier")
+                            {
+                                // We can have many identifiers in a row: _a, _b, _c
+                                identifiers.Add(_myNNode.command[i]);
+                            }
+
+                            if (_myNNode.command[i].type == "integer_value" || _myNNode.command[i].type == "decimal_value" || _myNNode.command[i].type == "string_value" || _myNNode.command[i].type == "character_value" || _myNNode.command[i].type == "boolean_value")
+                            {
+                                // We can have many values in a row: 1, 2
+                                values.Add(_myNNode.command[i]);
+                            }
+                        }
+
+                        // To assign values to the global myIdentifiers array
+                        // The number of values is the limit, so: _a, _b, _c = 1, 2  -> _a = 1, _b= 2, _c = 0
+                        for (int i = 0; i < values.Count; i++)
+                        {
+                            for (int j = 0; j < myIdentifiers.Count; j++)
+                            {
+                                if (identifiers[i].token == myIdentifiers[j].token)
+                                {
+                                    myIdentifiers[j].value = values[i].token;
+                                }
+                            }
+                        }
+
+                        identifiers = null;
+                        values = null;
+                    }
+                    else
+                    {
+                        // To search for identifiers and values in command expression of tokens
+                        List<Token> identifiers = new List<Token>();
+                        List<Token> operation = new List<Token>();
+                        bool assignation = false;
+
+                        for (int i = 0; i < _myNNode.command.Count; i++)
+                        {
+                            if (_myNNode.command[i].token == "=")
+                            {
+                                assignation = true;
+                                continue;
+                            }
+
+                            if (assignation == false)
+                            {
+                                if (_myNNode.command[i].type == "identifier")
+                                {
+                                    // We can have many identifiers in a row: _a, _b, _c
+                                    identifiers.Add(_myNNode.command[i]);
+                                }
+                            }
+                            else
+                            {
+                                if (_myNNode.command[i].type == "integer_value" || _myNNode.command[i].type == "decimal_value" || _myNNode.command[i].type == "string_value" || _myNNode.command[i].type == "character_value" || _myNNode.command[i].type == "boolean_value" || _myNNode.command[i].type == "identifier" || _myNNode.command[i].token == "+" || _myNNode.command[i].token == "-" || _myNNode.command[i].token == "*" || _myNNode.command[i].token == "/")
+                                {
+                                    // We can have many values in a row: 1, 2
+                                    operation.Add(_myNNode.command[i]);
+                                }
+                            }
+                        }
+
+                        // To assign values to the global myIdentifiers array
+                        // The number of values is the limit, so: entero _a = 1 + _a;
+                        if (identifiers.Count > 0)
+                        {
+                            Token tempToken = new Token();
+                            tempToken = doMathematicalOperation(operation);
+
+                            for (int j = 0; j < myIdentifiers.Count; j++)
+                            {
+                                if (identifiers[0].token == myIdentifiers[j].token)
+                                {
+                                    myIdentifiers[j].value = tempToken.value;
+                                }
+                            }
+                        }
+
+                        identifiers = null;
+                        operation = null;
+                    }
+                }
+                else if (_myNNode.command[0].identifierType == "integer_type")
+                {
+                    // This is the traditional identifier++ an increment
+                    if (_myNNode.command.Count > 1)
+                    {
+                        if (_myNNode.command[1].token == "++")
+                        {
+                            for (int i = 0; i < myIdentifiers.Count; i++)
+                            {
+                                if (_myNNode.command[0].token == myIdentifiers[i].token)
+                                {
+                                    myIdentifiers[i].value = Convert.ToString(Convert.ToInt64(myIdentifiers[i].value) + 1);
+                                    break;
+                                }
+                            }
+                        }
+                        // This is the traditional identifier-- a decrement
+                        else if (_myNNode.command[1].token == "--")
+                        {
+                            for (int i = 0; i < myIdentifiers.Count; i++)
+                            {
+                                if (_myNNode.command[0].token == myIdentifiers[i].token)
+                                {
+                                    myIdentifiers[i].value = Convert.ToString(Convert.ToInt64(myIdentifiers[i].value) - 1);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            else if (_myNNode.type == "method")
+            {
+                if (_myNNode.command[0].token == "escribir")
+                {
+                    List<Token> tokens = new List<Token>();
+                    bool open = false;
+                    string value = "";
+
+                    // To make a list of enclosed tokens between "(" and ")"                    
+                    for (int i = 0; i < _myNNode.command.Count; i++)
+                    {
+                        if (_myNNode.command[i].token == ")")
+                        {
+                            open = false;
+                        }
+
+                        if (open == true)
+                        {
+                            if (_myNNode.command[i].type == "integer_value" || _myNNode.command[i].type == "decimal_value" || _myNNode.command[i].type == "string_value" || _myNNode.command[i].type == "character_value" || _myNNode.command[i].type == "boolean_value")
+                            {
+                                tokens.Add(_myNNode.command[i]);
+                            }
+
+                            if (_myNNode.command[i].type == "identifier")
+                            {
+                                for (int j = 0; j < myIdentifiers.Count; j++)
+                                {
+                                    if (myIdentifiers[j].token == _myNNode.command[i].token)
+                                    {
+                                        tokens.Add(myIdentifiers[j]);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (_myNNode.command[i].token == "(")
+                        {
+                            open = true;
+                        }
+                    }
+
+                    // To concatenate every token in tokens List
+                    for (int i = 0; i < tokens.Count; i++)
+                    {
+                        if (tokens[i].type == "string_type" || tokens[i].type == "character_type" || tokens[i].identifierType == "string_type" || tokens[i].identifierType == "character_type")
+                        {
+                            // We do not want " characters in our final string ("hola")
+                            string newValue = "";
+                            if (tokens[i].value.Length > 0)
+                            {
+                                for (int j = 0; j < tokens[i].value.Length; j++)
+                                {
+                                    if (tokens[i].value[j] != '\"' && tokens[i].value[j] != '"' && tokens[i].value[j] != '\'')
+                                    {
+                                        //newValue += Convert.ToString(tokens[i].value[j]);
+                                        newValue += tokens[i].value[j].ToString();
+                                    }
+                                }
+                            }
+
+                            value += newValue;
+                        }
+                        else
+                        {
+                            value += tokens[i].value;
+                        }
+                    }
+
+                    // We write the result in the global LogFinal
+                    LogFinal += value + "\n";
+                }
+            }
+        }
+
+        public void EXECUTE_COMMANDS()
+        {
+            // A recursive function
+            void runTree(NNode _myNNode)
+            {
+                if (_myNNode == null)
+                {
+                    return;
+                }
+
+                if (_myNNode == myNTree.firstNNode)
+                {
+                    // Do something here
+                    
+                }
+
+                if (_myNNode.NextNNodes.Count != 0)
+                {
+                    for (int i = 0; i < _myNNode.NextNNodes.Count; i++)
+                    {
+                        // Do something here
+                        executeCommand(_myNNode.NextNNodes[i]);
+                        //LogFinal += _myNNode.NextNNodes[i].command[0].token;
+
+                        runTree(_myNNode.NextNNodes[i]);
+                    }
+                }
+            }
+
+            // To fill the tree of tokens
+            populateMyNTree(arrayOfTokens);
+
+            List<Token> myTokenList = new List<Token>();
+            NNode myNNode = new NNode("", myTokenList);
+
+            myNNode = myNTree.firstNNode;
+
+            runTree(myNNode);
+
         }
 
         //**********************
