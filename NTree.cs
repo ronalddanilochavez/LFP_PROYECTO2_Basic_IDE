@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +12,9 @@ namespace LFP_PROYECTO2_Basic_IDE
     {
         public string type;
         public Token[] booleanExpression;
-        public List<Token> command;
+        public List<Token> command = new List<Token>();
         public NNode previous;
-        public List<NNode> NextNNodes;
+        public List<NNode> NextNNodes = new List<NNode>();
         public int level;
         public int annotation;
         public int index;
@@ -22,8 +23,16 @@ namespace LFP_PROYECTO2_Basic_IDE
         // next and prev is by default initialized as null 
         public NNode(string _type, List<Token> _command)
         {
-            this.type = "";
-            this.command = _command;
+            this.type = _type;
+            //this.command = _command;
+            if (_command.Count > 0)
+            {
+                for (int i = 0; i < _command.Count; i++)
+                {
+                    this.command.Add(_command[i]);
+                }
+            }
+
             this.previous = null;
             this.NextNNodes = new List<NNode>();
             this.level = 0;
@@ -52,7 +61,8 @@ namespace LFP_PROYECTO2_Basic_IDE
         public NNode createNNode(string _type, List<Token> _command)
         {
             NNode newNNode = new NNode(_type, _command);
-            newNNode.type = _type;
+            //newNNode.type = _type;
+            //newNNode.command = _command;
 
             if (firstNNode == null)
             {
@@ -72,7 +82,8 @@ namespace LFP_PROYECTO2_Basic_IDE
             }
 
             NNode newNNode = new NNode(_type, _command);
-            newNNode.type = _type;
+            //newNNode.type = _type;
+            //newNNode.command = _command;
 
             newNNode.previous = _NNode;
             _NNode.NextNNodes.Add(newNNode);
@@ -94,7 +105,8 @@ namespace LFP_PROYECTO2_Basic_IDE
             if (_NNode.previous == null)
             {
                 NNode newNNode = new NNode(_type, _command);
-                newNNode.type = _type;
+                //newNNode.type = _type;
+                //newNNode.command = _command;
 
                 _NNode.previous = newNNode;
                 newNNode.NextNNodes.Add(_NNode);
@@ -195,6 +207,11 @@ namespace LFP_PROYECTO2_Basic_IDE
             {
                 // Do something here
                 Log += _testNNode.level + " root" + " " + _testNNode.type;
+                printNNodeCommands(_testNNode);
+                /*for (int j = 0; j < _testNNode.command.Count; j++)
+                {
+                    Log += _testNNode.command[j].value;
+                }*/
             }
 
             if (_testNNode.NextNNodes.Count != 0)
@@ -204,9 +221,22 @@ namespace LFP_PROYECTO2_Basic_IDE
                 {
                     // Do something here
                     Log += _testNNode.NextNNodes[i].level + " " + _testNNode.NextNNodes[i].type + ", ";
+                    printNNodeCommands(_testNNode.NextNNodes[i]);
+                    /*for (int j = 0; j < _testNNode.NextNNodes[i].command.Count; j++)
+                    {
+                        Log += _testNNode.NextNNodes[i].command[j].value;
+                    }*/
 
                     printNTree(_testNNode.NextNNodes[i]);
                 }
+            }
+        }
+
+        public void printNNodeCommands(NNode _testNNode)
+        {
+            for (int i = 0; i < _testNNode.command.Count; i++)
+            {
+                Log += _testNNode.command[i].value + ", ";
             }
         }
     }

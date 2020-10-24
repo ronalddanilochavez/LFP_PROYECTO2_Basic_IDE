@@ -147,11 +147,11 @@ Comentarios (Rojo):
 	// /* */
 
 Palabras Reservadas (Verde):
-	SI SINO FIN_SI
-	EN_CASO CASO: OTRO CASO: FIN_CASO
+	SI SINO SINO_SI
+	EN_CASO CASO: OTRO CASO:
 	SEA:
-	PARA DESDE HASTA HACER FIN_PARA
-	MIENTRAS FIN_MIENTRAS
+	PARA DESDE HASTA HACER
+	MIENTRAS
 	INCREMENTO
 	REINICIAR CICLO
 	TERMINAR CICLO
@@ -162,21 +162,18 @@ Métodos Principales (Azul Cadete)
 	leer
 
 Estructuras:
-	SI (condición) HACER
+	SI (condición)
 	SINO
-	FIN_SI
+	SINO_SI (condición)
 
 	EN_CASO (variable)
 	CASO:
 	CASO:
 	OTRO CASO:
-	FIN_CASO
 
-	PARA DESDE entero HASTA entero HACER
-	FIN_PARA
+	PARA DESDE entero HASTA entero
 
 	MIENTRAS (condición)
-	FIN_MIENTRAS
 
 	HACER
 	MIENTRAS (condición)
