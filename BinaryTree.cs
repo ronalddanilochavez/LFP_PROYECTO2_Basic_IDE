@@ -63,7 +63,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public Node appendLeft(Node _node, Token _newToken)
         {
-            if (firstNode == null)
+            if (firstNode == null || _node == null)
             {
                 return createNode(_newToken);
             }
@@ -85,7 +85,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public Node appendRight(Node _node, Token _newToken)
         {
-            if (firstNode == null)
+            if (firstNode == null || _node == null)
             {
                 return createNode(_newToken);
             }
@@ -107,7 +107,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public Node append(Node _node, Token _newToken)
         {
-            if (firstNode == null)
+            if (firstNode == null || _node == null)
             {
                 return createNode(_newToken);
             }
@@ -140,7 +140,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public Node pushLeft(Node _node, Token _newToken)
         {
-            if (firstNode == null)
+            if (firstNode == null || _node == null)
             {
                 return createNode(_newToken);
             }
@@ -167,7 +167,7 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public Node pushRight(Node _node, Token _newToken)
         {
-            if (firstNode == null)
+            if (firstNode == null || _node == null)
             {
                 return createNode(_newToken);
             }
@@ -221,8 +221,7 @@ namespace LFP_PROYECTO2_Basic_IDE
             {
                 _testNode.level = 1;
                 maxLevel = 1;
-                nodesCount = 0;
-                nodesCount++;
+                nodesCount = 1;
 
                 Log = "";
                 Log = Convert.ToString(_testNode.level) + "\n"; 

@@ -2305,12 +2305,86 @@ namespace LFP_PROYECTO2_Basic_IDE
                         // WHILE EXPRESSION
                         else if (_myNNode.NextNNodes[i].type == "while")
                         {
+                            List<Token> booleanExpression = new List<Token>();
+                            bool openParenthesis = false;
 
+                            // To fill the booleanExpression List
+                            for (int j = 0; j < _myNNode.NextNNodes[i].command.Count; j++)
+                            {
+                                if (_myNNode.NextNNodes[i].command[j].token == "(")
+                                {
+                                    openParenthesis = true;
+                                }
+
+                                if (openParenthesis == true)
+                                {
+                                    booleanExpression.Add(_myNNode.NextNNodes[i].command[j]);
+                                }
+
+                                if (_myNNode.NextNNodes[i].command[j].token == ")")
+                                {
+                                    openParenthesis = false;
+                                }
+                            }
+
+                            // We convert the booleanExpression to array booleanExpressionArray
+                            Token[] booleanExpressionArray = new Token[booleanExpression.Count];
+                            for (int j = 0; j < booleanExpressionArray.Length; j++)
+                            {
+                                booleanExpressionArray[j] = booleanExpression[j];
+                            }
+
+                            while (evaluateBooleanExpression(booleanExpressionArray) == true)
+                            {
+                                runTree(_myNNode.NextNNodes[i]);
+                            }
                         }
                         // DO WHILE EXPRESSION
                         else if (_myNNode.NextNNodes[i].type == "do_while")
                         {
+                            if (i + 1 < _myNNode.NextNNodes.Count)
+                            {
+                                if (_myNNode.NextNNodes[i + 1].type == "while")
+                                {
+                                    List<Token> booleanExpression = new List<Token>();
+                                    bool openParenthesis = false;
 
+                                    // To fill the booleanExpression List
+                                    for (int j = 0; j < _myNNode.NextNNodes[i + 1].command.Count; j++)
+                                    {
+                                        if (_myNNode.NextNNodes[i + 1].command[j].token == "(")
+                                        {
+                                            openParenthesis = true;
+                                        }
+
+                                        if (openParenthesis == true)
+                                        {
+                                            booleanExpression.Add(_myNNode.NextNNodes[i + 1].command[j]);
+                                        }
+
+                                        if (_myNNode.NextNNodes[i + 1].command[j].token == ")")
+                                        {
+                                            openParenthesis = false;
+                                        }
+                                    }
+
+                                    // We convert the booleanExpression to array booleanExpressionArray
+                                    Token[] booleanExpressionArray = new Token[booleanExpression.Count];
+                                    for (int j = 0; j < booleanExpressionArray.Length; j++)
+                                    {
+                                        booleanExpressionArray[j] = booleanExpression[j];
+                                    }
+
+                                    do
+                                    {
+                                        runTree(_myNNode.NextNNodes[i]);
+                                    }
+                                    while (evaluateBooleanExpression(booleanExpressionArray) == true);
+
+                                    // To advance one unit avoiding the evaluation of the "while" estatement
+                                    i++;
+                                }
+                            }
                         }
                         // SWITCH EXPRESSION
                         else if (_myNNode.NextNNodes[i].type == "switch")
