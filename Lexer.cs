@@ -16,7 +16,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         private string[] tokensBlue2 = { "++", "--", ">=", "<=", "==", "!=", "||", "&&" }; // Relational Operators, Logical Operators
         private string[] tokensGreen2 = { "SI" }; // Reserved word
         // 4 characters
-        private string[] tokensGreen4 = { "SINO", "SEA:", "PARA" }; // Reserved word
+        private string[] tokensGreen4 = { "SINO", "SEA:", "PARA", "PASO" }; // Reserved word
         private string[] tokensCadetBlue4 = { "leer" }; // Function
         // 5 characters
         private string[] tokensGreen5 = { "CASO:", "HACER", "DESDE", "HASTA" }; // Reserved word
