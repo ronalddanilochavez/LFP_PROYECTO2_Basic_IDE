@@ -298,6 +298,10 @@ namespace LFP_PROYECTO2_Basic_IDE
                 log += arrayOfTokens[i].token + " " + arrayOfTokens[i].value + "\n"; 
             }*/
 
+            // To print the NTree
+            //myNTree.printNTree(myNTree.firstNNode);
+            //log += myNTree.Log;
+
             return log;
         }
 

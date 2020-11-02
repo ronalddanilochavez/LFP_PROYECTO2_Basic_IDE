@@ -220,8 +220,9 @@ namespace LFP_PROYECTO2_Basic_IDE
                 for (int i = 0; i < _testNNode.NextNNodes.Count; i++)
                 {
                     // Do something here
-                    Log += _testNNode.NextNNodes[i].level + " " + _testNNode.NextNNodes[i].type + ", ";
-                    printNNodeCommands(_testNNode.NextNNodes[i]);
+                    //Log += _testNNode.NextNNodes[i].level + " " + _testNNode.NextNNodes[i].type + ", ";
+                    Log += _testNNode.NextNNodes[i].type + ", ";
+                    //printNNodeCommands(_testNNode.NextNNodes[i]);
                     /*for (int j = 0; j < _testNNode.NextNNodes[i].command.Count; j++)
                     {
                         Log += _testNNode.NextNNodes[i].command[j].value;
