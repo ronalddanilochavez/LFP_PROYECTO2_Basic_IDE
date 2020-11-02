@@ -121,65 +121,108 @@
     <value>17, 17</value>
   </metadata>
   <data name="Language.Text" xml:space="preserve">
-    <value>Tipos:
-	entero (Púrpura)
+    <value>TIPOS DE VARIABLE
+Los tipos de variable tienen su propio color
+
+        entero (Púrpura)
 	decimal (Cyan)
 	cadena (Gris)
 	booleano (Naranja)
 	caracter (Café)
 
-Operadores Aritméticos (Azul):
+OPERADORES ARITMÉTICOS
+Los operadores aritméticos se ven en color azul.
+
 	+ - * / ++ --
 
-Operadores Relacionales (Azul):
-	&gt; &lt; &gt;= &lt;= == !=
+OPERADORES RELACIONALES
+Los operadores relacionales se ven en color azul.
+	
+&gt; &lt; &gt;= &lt;= == !=
 
-Operadores Lógicos (Azul):
-	|| &amp;&amp; !
+OPERADORES LÓGICOS
+Los operadores lógicos se ven en color azul.
+	
+|| &amp;&amp; !
 
-Signos de Agrupación (Azul):
-	() {}
+SIGNOS DE AGRUPACIÓN
+Los los signos de agrupación se ven en color azul.
+	
+( )
 
-Asignación y Fin de Sentencia (Rosado):
-	= ;
+ASIGNACIÓN Y FIN DE SENTENCIA
+Los operadores aritméticos se ven en color rosado.
+	
+= ;
 
-Comentarios (Rojo):
-	// /* */
+COMENTARIOS
+Los comentarios cortos y largos se ven en color rojo.
+Los comentarios cortos sólo abarcan una línea mientras que los comentarios largos pueden contener a varias líneas.
+	
+// /* */
 
-Palabras Reservadas (Verde):
-	SI SINO SINO_SI
+
+PALABRAS RESERVADAS
+Las palabras reservadas se ven en color verde.
+	
+          SI SINO SINO_SI
 	EN_CASO CASO: OTRO CASO:
 	SEA:
 	PARA DESDE HASTA HACER
-	MIENTRAS
+	MIENTRAS FIN_MIENTRAS
 	INCREMENTO
-	REINICIAR CICLO
+	CONTINUAR CICLO
 	TERMINAR CICLO
 
-Métodos Principales (Azul Cadete)
-	principal
-	escribir
-	leer
+ESTRUCTURAS TÍPICAS
+Las estructuras típicas recomendadas son:
 
-Estructuras:
 	SI (condición)
+          {
+               Código
+           }
+	SINO_SI
+          {
+               Código
+          }
 	SINO
-	SINO_SI (condición)
+          {
+               Código
+           }
 
 	EN_CASO (variable)
 	CASO:
+          {
+               Código
+           }
 	CASO:
+          {
+               Código
+           }
 	OTRO CASO:
+          {
+               Código
+          }
 
-	PARA DESDE entero HASTA entero
+
+          PARA DESDE entero HASTA entero PASO entero
+          {
+               Código
+           }
 
 	MIENTRAS (condición)
+          {
+               Código
+           }
 
-	HACER
-	MIENTRAS (condición)
+           HACER
+           {
+                Código
+           }
+            MIENTRAS (Condición);
 
-	TERMINAR CICLO
-	CONTINUAR CICLO</value>
+	CONTINUAR CICLO
+	TERMINAR CICLO</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

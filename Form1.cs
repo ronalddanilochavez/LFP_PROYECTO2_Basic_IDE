@@ -21,6 +21,7 @@ namespace LFP_PROYECTO2_Basic_IDE
         private File myFile = new File();
         private Lexer.Token myToken = new Lexer.Token();
         private List<Lexer.Token> tokenList = new List<Lexer.Token>();
+        private StackAutomaton myStackAutomaton = new StackAutomaton();
 
         private Automaton myAutomaton = new Automaton();
         private string[] myStates = { "Q0", "Q1", "Q2" };
@@ -405,6 +406,128 @@ namespace LFP_PROYECTO2_Basic_IDE
             AutomatonLog.Clear();
             AutomatonLog.AppendText("\n" + "Q0" + " Estado inicial");
             AutomatonStrings.Clear();
+        }
+
+        private void buttonStep_Click(object sender, EventArgs e)
+        {
+            if (myStackAutomaton.state == "setting")
+            {
+                richTextBoxExpression.Text = "(id)+numero$";
+                richTextBoxStack.Text = "$E";
+
+                labelInfoLL1.Text = "Escriba una expresión para evaluar";
+
+                myStackAutomaton.state = "start";
+            }
+            else if (myStackAutomaton.state == "start")
+            {
+                myStackAutomaton.Table[0, 0] = textBox00.Text;
+                myStackAutomaton.Table[0, 1] = textBox01.Text;
+                myStackAutomaton.Table[0, 2] = textBox02.Text;
+                myStackAutomaton.Table[0, 3] = textBox03.Text;
+                myStackAutomaton.Table[0, 4] = textBox04.Text;
+                myStackAutomaton.Table[0, 5] = textBox05.Text;
+                myStackAutomaton.Table[0, 6] = textBox06.Text;
+
+                myStackAutomaton.Table[1, 0] = textBox10.Text;
+                myStackAutomaton.Table[1, 1] = textBox11.Text;
+                myStackAutomaton.Table[1, 2] = textBox12.Text;
+                myStackAutomaton.Table[1, 3] = textBox13.Text;
+                myStackAutomaton.Table[1, 4] = textBox14.Text;
+                myStackAutomaton.Table[1, 5] = textBox15.Text;
+                myStackAutomaton.Table[1, 6] = textBox16.Text;
+
+                myStackAutomaton.Table[2, 0] = textBox20.Text;
+                myStackAutomaton.Table[2, 1] = textBox21.Text;
+                myStackAutomaton.Table[2, 2] = textBox22.Text;
+                myStackAutomaton.Table[2, 3] = textBox23.Text;
+                myStackAutomaton.Table[2, 4] = textBox24.Text;
+                myStackAutomaton.Table[2, 5] = textBox25.Text;
+                myStackAutomaton.Table[2, 6] = textBox26.Text;
+
+                myStackAutomaton.Table[3, 0] = textBox30.Text;
+                myStackAutomaton.Table[3, 1] = textBox31.Text;
+                myStackAutomaton.Table[3, 2] = textBox32.Text;
+                myStackAutomaton.Table[3, 3] = textBox33.Text;
+                myStackAutomaton.Table[3, 4] = textBox34.Text;
+                myStackAutomaton.Table[3, 5] = textBox35.Text;
+                myStackAutomaton.Table[3, 6] = textBox36.Text;
+
+                myStackAutomaton.Table[4, 0] = textBox40.Text;
+                myStackAutomaton.Table[4, 1] = textBox41.Text;
+                myStackAutomaton.Table[4, 2] = textBox42.Text;
+                myStackAutomaton.Table[4, 3] = textBox43.Text;
+                myStackAutomaton.Table[4, 4] = textBox44.Text;
+                myStackAutomaton.Table[4, 5] = textBox45.Text;
+                myStackAutomaton.Table[4, 6] = textBox46.Text;
+
+                // Initializing
+                myStackAutomaton.fillExpressionList(richTextBoxExpression.Text);
+                myStackAutomaton.start();
+                myStackAutomaton.step();
+
+                // To show the stack
+                string myStack = "";
+                for (int i = 0; i < myStackAutomaton.stack.Count; i++)
+                {
+                    myStack += myStackAutomaton.stack[i];
+                }
+                richTextBoxStack.Text = myStack;
+
+                // To write the actual "token"
+                richTextBoxToken.Text = myStackAutomaton.token;
+
+                // To write the actual state
+                if (myStackAutomaton.state == "start")
+                {
+                    labelInfoLL1.Text = "Comienzo";
+                }
+                else if (myStackAutomaton.state == "shift")
+                {
+                    labelInfoLL1.Text = "Shift";
+                }
+                else if (myStackAutomaton.state == "reduce")
+                {
+                    labelInfoLL1.Text = "Reduce";
+                }
+                else if (myStackAutomaton.state == "acceptation")
+                {
+                    labelInfoLL1.Text = "Aceptación";
+                }
+            }
+            else
+            {
+                myStackAutomaton.step();
+
+                // To show the stack
+                string myStack = "";
+                for (int i = 0; i < myStackAutomaton.stack.Count; i++)
+                {
+                    myStack += myStackAutomaton.stack[i];
+                }
+                richTextBoxStack.Text = myStack;
+
+                // To write the actual "token"
+                richTextBoxToken.Text = myStackAutomaton.token;
+
+                // To write the actual state
+                if (myStackAutomaton.state == "start")
+                {
+                    labelInfoLL1.Text = "Comienzo";
+                }
+                else if (myStackAutomaton.state == "shift")
+                {
+                    labelInfoLL1.Text = "Shift";
+                }
+                else if (myStackAutomaton.state == "reduce")
+                {
+                    labelInfoLL1.Text = "Reduce";
+                }
+                else if (myStackAutomaton.state == "acceptation")
+                {
+                    labelInfoLL1.Text = "Aceptación";
+                }
+            }
         }
     }
 }

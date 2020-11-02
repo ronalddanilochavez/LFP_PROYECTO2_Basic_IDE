@@ -20,6 +20,9 @@ namespace LFP_PROYECTO2_Basic_IDE
 
         public string LogFinal = "";
 
+        private bool break_cycle = false;
+        private bool continue_cycle = false;
+
         //**********************
         public void listArrayOfTokens(string tokens)
         {
@@ -294,6 +297,10 @@ namespace LFP_PROYECTO2_Basic_IDE
             {
                 log += arrayOfTokens[i].token + " " + arrayOfTokens[i].value + "\n"; 
             }*/
+
+            // To print the NTree
+            //myNTree.printNTree(myNTree.firstNNode);
+            //log += myNTree.Log;
 
             return log;
         }
@@ -1650,6 +1657,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                         {
                             tokenType = "do_while";
                         }
+                        else if (myTokens[i].token == "TERMINAR CICLO")
+                        {
+                            tokenType = "break";
+                        }
+                        else if (myTokens[i].token == "CONTINUAR CICLO")
+                        {
+                            tokenType = "continue";
+                        }
                         else if (myTokens[i].token == "EN_CASO")
                         {
                             tokenType = "switch";
@@ -1857,6 +1872,14 @@ namespace LFP_PROYECTO2_Basic_IDE
                     }
                     
                 }
+            }
+            else if (_myNNode.type == "break")
+            {
+                break_cycle = true;
+            }
+            else if (_myNNode.type == "continue")
+            {
+                continue_cycle = true;
             }
             // If is an identifier: _a = 3;
             else if (_myNNode.type == "identifier")
@@ -2405,6 +2428,18 @@ namespace LFP_PROYECTO2_Basic_IDE
                         {
                             //LogFinal += _myNNode.NextNNodes[i].command[0].token + "\n";
                             executeCommand(_myNNode.NextNNodes[i]);
+
+                            // To reset the break_cycle or the continue_cycle
+                            if (break_cycle == true)
+                            {
+                                break;
+                                break_cycle = false;
+                            }
+                            else if (continue_cycle == true)
+                            {
+                                continue;
+                                continue_cycle = false;
+                            }
 
                             runTree(_myNNode.NextNNodes[i]);
                         }
