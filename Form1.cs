@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
@@ -214,6 +215,39 @@ namespace LFP_PROYECTO2_Basic_IDE
                 Log.AppendText("Hola");
                 Log.AppendText("\nToken = \"" + myToken.token + "\"" + ", " + myToken.type);
             }*/
+
+            TreeNode node = new TreeNode();
+
+            void fillTreeView(NNode _testNNode)
+            {
+                if (_testNNode == null)
+                {
+                    return;
+                }
+
+                if (_testNNode == myParser.myNTree.firstNNode)
+                {
+                    // Do something here
+
+                    node = treeView.Nodes.Add(_testNNode.command[0].token);
+                }
+
+                if (_testNNode.NextNNodes.Count != 0)
+                {
+                    for (int i = 0; i < _testNNode.NextNNodes.Count; i++)
+                    {
+                        // Do something here
+
+                        node.Nodes.Add(_testNNode.NextNNodes[i].command[0].token);
+
+                        fillTreeView(_testNNode.NextNNodes[i]);
+                    }
+                }
+            }
+
+            treeView.Nodes.Clear();
+            fillTreeView(myParser.myNTree.firstNNode);
+            treeView.ExpandAll();
         }
 
         //********************************************************
@@ -527,6 +561,44 @@ namespace LFP_PROYECTO2_Basic_IDE
                 {
                     labelInfoLL1.Text = "Aceptación";
                 }
+            }
+        }
+
+        private void buttonExportTreeView_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveFileDialog saveFile = new SaveFileDialog();
+                // To show some title
+                saveFile.Title = "Guardar imagen del árbol";
+                // set a default file name
+                saveFile.FileName = "";
+                // set filters - this can be done in properties as well
+                saveFile.Filter = "Archivos JPG (*.jpg)|*.jpg|Todos los archivos (*.*)|*.*";
+                // Directory to start
+                saveFile.InitialDirectory = ".";
+
+                if (saveFile.ShowDialog() == DialogResult.OK)
+                {
+                    //using (StreamWriter sw = new StreamWriter(saveFile.FileName))
+                    //sw.WriteLine("Hello World!");
+                    //rtb.SaveFile(saveFile.FileName);
+                    fileProject[1] = saveFile.FileName;
+
+                    Rectangle bounds = this.Bounds;
+                    using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                    {
+                        using (Graphics g = Graphics.FromImage(bitmap))
+                        {
+                            g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+                        }
+                        bitmap.Save(saveFile.FileName, ImageFormat.Jpeg);
+                    }
+                }
+            }
+            catch (Exception E)
+            {
+                Console.WriteLine(E.Message);
             }
         }
     }

@@ -141,11 +141,15 @@
             this.textBox20 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
             this.textBox00 = new System.Windows.Forms.TextBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.treeView = new System.Windows.Forms.TreeView();
+            this.buttonExportTreeView = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.tabPageIDE.SuspendLayout();
             this.tabPageAutomaton.SuspendLayout();
             this.tabPageStackAutomaton.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -272,6 +276,7 @@
             this.TabControl.Controls.Add(this.tabPageIDE);
             this.TabControl.Controls.Add(this.tabPageAutomaton);
             this.TabControl.Controls.Add(this.tabPageStackAutomaton);
+            this.TabControl.Controls.Add(this.tabPage1);
             this.TabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TabControl.Location = new System.Drawing.Point(12, 28);
             this.TabControl.Name = "TabControl";
@@ -756,7 +761,6 @@
             this.richTextBoxExpression.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxExpression.Location = new System.Drawing.Point(18, 358);
             this.richTextBoxExpression.Name = "richTextBoxExpression";
-            this.richTextBoxExpression.ReadOnly = true;
             this.richTextBoxExpression.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.richTextBoxExpression.Size = new System.Drawing.Size(824, 39);
             this.richTextBoxExpression.TabIndex = 71;
@@ -1255,6 +1259,35 @@
             this.textBox00.Size = new System.Drawing.Size(69, 22);
             this.textBox00.TabIndex = 7;
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.buttonExportTreeView);
+            this.tabPage1.Controls.Add(this.treeView);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1120, 538);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "Árbol";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // treeView
+            // 
+            this.treeView.Location = new System.Drawing.Point(6, 6);
+            this.treeView.Name = "treeView";
+            this.treeView.Size = new System.Drawing.Size(1108, 464);
+            this.treeView.TabIndex = 0;
+            // 
+            // buttonExportTreeView
+            // 
+            this.buttonExportTreeView.Location = new System.Drawing.Point(20, 490);
+            this.buttonExportTreeView.Name = "buttonExportTreeView";
+            this.buttonExportTreeView.Size = new System.Drawing.Size(198, 23);
+            this.buttonExportTreeView.TabIndex = 1;
+            this.buttonExportTreeView.Text = "Exportar imagen";
+            this.buttonExportTreeView.UseVisualStyleBackColor = true;
+            this.buttonExportTreeView.Click += new System.EventHandler(this.buttonExportTreeView_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1278,6 +1311,7 @@
             this.tabPageAutomaton.PerformLayout();
             this.tabPageStackAutomaton.ResumeLayout(false);
             this.tabPageStackAutomaton.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1397,6 +1431,9 @@
         private System.Windows.Forms.Button buttonStep;
         private System.Windows.Forms.Label labelInfoLL1;
         private System.Windows.Forms.RichTextBox richTextBoxToken;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.Button buttonExportTreeView;
     }
 }
 
